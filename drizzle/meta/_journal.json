@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1786522722042,
+      "tag": "0000_busy_the_liberteens",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1786522973856,
+      "tag": "0001_brief_azazel",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1786524398658,
+      "tag": "0002_sticky_wolverine",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1786540495571,
+      "tag": "0003_cooing_betty_brant",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1786876947961,
+      "tag": "0004_nappy_magdalene",
+      "breakpoints": true
+    }
+  ]
+}

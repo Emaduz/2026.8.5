@@ -1,0 +1,22 @@
+ALTER TABLE `posts` ADD `titleEn` varchar(255);--> statement-breakpoint
+ALTER TABLE `posts` ADD `titleAr` varchar(255);--> statement-breakpoint
+ALTER TABLE `posts` ADD `summaryEn` text;--> statement-breakpoint
+ALTER TABLE `posts` ADD `summaryAr` text;--> statement-breakpoint
+ALTER TABLE `posts` ADD `contentEn` text;--> statement-breakpoint
+ALTER TABLE `posts` ADD `contentAr` text;--> statement-breakpoint
+ALTER TABLE `project_slides` ADD `titleEn` varchar(255);--> statement-breakpoint
+ALTER TABLE `project_slides` ADD `titleAr` varchar(255);--> statement-breakpoint
+ALTER TABLE `project_slides` ADD `descriptionEn` text;--> statement-breakpoint
+ALTER TABLE `project_slides` ADD `descriptionAr` text;--> statement-breakpoint
+ALTER TABLE `projects` ADD `titleEn` varchar(255);--> statement-breakpoint
+ALTER TABLE `projects` ADD `titleAr` varchar(255);--> statement-breakpoint
+ALTER TABLE `projects` ADD `categoryEn` varchar(128);--> statement-breakpoint
+ALTER TABLE `projects` ADD `categoryAr` varchar(128);--> statement-breakpoint
+ALTER TABLE `projects` ADD `descriptionEn` text;--> statement-breakpoint
+ALTER TABLE `projects` ADD `descriptionAr` text;--> statement-breakpoint
+ALTER TABLE `site_sections` ADD `titleEn` text;--> statement-breakpoint
+ALTER TABLE `site_sections` ADD `titleAr` text;--> statement-breakpoint
+ALTER TABLE `site_sections` ADD `subtitleEn` text;--> statement-breakpoint
+ALTER TABLE `site_sections` ADD `subtitleAr` text;--> statement-breakpoint
+ALTER TABLE `site_sections` ADD `contentEn` text;--> statement-breakpoint
+ALTER TABLE `site_sections` ADD `contentAr` text;
