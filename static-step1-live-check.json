@@ -1,0 +1,21 @@
+{
+  "base": "https://2026-8-5.vercel.app",
+  "checkedAt": "2026-08-16T09:13:42.193Z",
+  "results": [
+    {
+      "path": "/",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/assets/portrait.jpg",
+      "status": 200,
+      "contentType": "image/jpeg"
+    },
+    {
+      "path": "/api/portrait?v=9",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8"
+    }
+  ]
+}

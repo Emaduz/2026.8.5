@@ -1,0 +1,38 @@
+{
+  "base": "https://2026-8-5.vercel.app",
+  "checkedAt": "2026-08-16T10:34:25.423Z",
+  "localPortrait": {
+    "bytes": 730108,
+    "sha256": "ac1a6e2d18cf6f3769d541eb8d70c792915edb42c13e2288b9cf53e76e19ff16"
+  },
+  "results": [
+    {
+      "path": "/",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 368273,
+      "sha256": "70daae4d0bbe2b0f0b0c024391069633118b3cb5b5cea83ad33c4018dfc1b53c"
+    },
+    {
+      "path": "/assets/portrait.jpg",
+      "status": 200,
+      "contentType": "image/jpeg",
+      "bytes": 730108,
+      "sha256": "ac1a6e2d18cf6f3769d541eb8d70c792915edb42c13e2288b9cf53e76e19ff16"
+    },
+    {
+      "path": "/portrait.jpg",
+      "status": 200,
+      "contentType": "image/jpeg",
+      "bytes": 730108,
+      "sha256": "ac1a6e2d18cf6f3769d541eb8d70c792915edb42c13e2288b9cf53e76e19ff16"
+    },
+    {
+      "path": "/api/portrait",
+      "status": 200,
+      "contentType": "application/octet-stream",
+      "bytes": 31,
+      "sha256": "5026494a00a25109022aed63598d21c0015a853f82ab9f38d93183331c9f9055"
+    }
+  ]
+}

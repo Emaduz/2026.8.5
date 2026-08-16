@@ -1,6 +1,21 @@
 {
-  "rewrites": [
-    { "source": "/api/portrait", "destination": "/assets/portrait.jpg" },
-    { "source": "/(.*)", "destination": "/index.html" }
+  "version": 2,
+  "functions": {
+    "dist/index.js": {
+      "maxDuration": 30
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/dist/index.js"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/dist/index.js"
+    }
   ]
 }
