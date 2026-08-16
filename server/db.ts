@@ -157,3 +157,118 @@ export async function saveSection(input: { key: string; title?: string | null; t
 export const contentTables = { posts, projects, siteSections };
 
 
+
+export async function ensureDatabaseInitialized() {
+  const db = await getDb();
+  if (!db) return;
+  try {
+    const conn = (db as any).session?.connection || (db as any).client;
+    if (conn && typeof conn.query === "function") {
+      await conn.query(`
+        CREATE TABLE IF NOT EXISTS users (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          openId VARCHAR(255) NOT NULL UNIQUE,
+          name VARCHAR(255),
+          email VARCHAR(255),
+          loginMethod VARCHAR(64),
+          role VARCHAR(32) DEFAULT 'user',
+          createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          lastSignedIn TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      await conn.query(`
+        CREATE TABLE IF NOT EXISTS site_sections (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          \`key\` VARCHAR(64) NOT NULL UNIQUE,
+          title TEXT,
+          titleEn TEXT,
+          titleAr TEXT,
+          subtitle TEXT,
+          subtitleEn TEXT,
+          subtitleAr TEXT,
+          content TEXT,
+          contentEn TEXT,
+          contentAr TEXT,
+          imageUrl VARCHAR(1000),
+          updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        );
+      `);
+      await conn.query(`
+        CREATE TABLE IF NOT EXISTS projects (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          title VARCHAR(255) NOT NULL,
+          titleEn VARCHAR(255),
+          titleAr VARCHAR(255),
+          category VARCHAR(128) NOT NULL,
+          categoryEn VARCHAR(128),
+          categoryAr VARCHAR(128),
+          description TEXT NOT NULL,
+          descriptionEn TEXT,
+          descriptionAr TEXT,
+          imageUrl VARCHAR(1000),
+          clientName VARCHAR(255),
+          sourceUrl VARCHAR(1000),
+          sourcePlatform VARCHAR(64),
+          published TINYINT DEFAULT 1,
+          displayOrder INT DEFAULT 0,
+          createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        );
+      `);
+      await conn.query(`
+        CREATE TABLE IF NOT EXISTS project_slides (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          projectId INT NOT NULL,
+          title VARCHAR(255) NOT NULL,
+          titleEn VARCHAR(255),
+          titleAr VARCHAR(255),
+          description TEXT,
+          descriptionEn TEXT,
+          descriptionAr TEXT,
+          imageUrl VARCHAR(1000) NOT NULL,
+          displayOrder INT DEFAULT 0
+        );
+      `);
+      await conn.query(`
+        CREATE TABLE IF NOT EXISTS posts (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          title VARCHAR(255) NOT NULL,
+          titleEn VARCHAR(255),
+          titleAr VARCHAR(255),
+          slug VARCHAR(255) NOT NULL UNIQUE,
+          publishedAt DATETIME NOT NULL,
+          summary TEXT NOT NULL,
+          summaryEn TEXT,
+          summaryAr TEXT,
+          content TEXT NOT NULL,
+          contentEn TEXT,
+          contentAr TEXT,
+          imageUrl VARCHAR(1000),
+          published TINYINT DEFAULT 1,
+          createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        );
+      `);
+    }
+
+    const existingProjects = await db.select().from(projects).limit(1);
+    if (existingProjects.length === 0) {
+      const defaultProjects = [
+        { title: "ERA Shopping Logo & Brand", category: "Branding", description: "Comprehensive shopping brand identity and visual system.", sourceUrl: "https://www.behance.net/gallery/240072049/ERA-shopping-Logo-Brand", sourcePlatform: "Behance", published: 1, displayOrder: 1 },
+        { title: "Jenan Yemeni Honey", category: "Packaging & Branding", description: "Authentic Yemeni honey packaging and brand identity design.", sourceUrl: "https://www.behance.net/gallery/154753213/Jenan-Yemeni-Honey-Logo-Branding", sourcePlatform: "Behance", published: 1, displayOrder: 2 },
+        { title: "Ekleel Alenayah Medical Company", category: "Corporate Identity", description: "Medical company branding, visual system, and corporate stationery.", sourceUrl: "https://www.behance.net/gallery/210092607/Ekleel-Alenayah-Medical-Company-Logo-Brand", sourcePlatform: "Behance", published: 1, displayOrder: 3 },
+        { title: "Caesar Logo & Brand", category: "Brand Identity", description: "Distinctive brand identity design with modern typography.", sourceUrl: "https://www.behance.net/gallery/199510245/Caesar-logo-Brand", sourcePlatform: "Behance", published: 1, displayOrder: 4 },
+        { title: "Al-Khattabi Press Logo & Identity", category: "Printing & Press Identity", description: "Corporate visual identity for a prominent press establishment.", sourceUrl: "https://www.behance.net/gallery/192992769/AL-KHATTABI-PRESS-LOGO-IDENTITY", sourcePlatform: "Behance", published: 1, displayOrder: 5 },
+        { title: "Balsam Taibah Medical Co.", category: "Healthcare Branding", description: "Comprehensive branding and medical collateral design.", sourceUrl: "https://www.behance.net/gallery/156295027/Balsam-Taibah-Medical-Co-Logo-Branding", sourcePlatform: "Behance", published: 1, displayOrder: 6 },
+        { title: "Al-Bakeli Dental Clinic", category: "Clinical Branding", description: "Visual identity and clinic branding for dental care excellence.", sourceUrl: "https://www.behance.net/gallery/159472965/Al-Bakeli-Dental-Clinic", sourcePlatform: "Behance", published: 1, displayOrder: 7 },
+        { title: "Bahaa Silver Logo Typography", category: "Luxury Logo & Typography", description: "Custom typography and brand identity for luxury silver.", sourceUrl: "https://www.behance.net/gallery/212641103/Bahaa-Silver-Logo-typography", sourcePlatform: "Behance", published: 1, displayOrder: 8 },
+      ];
+      for (const p of defaultProjects) {
+        await db.insert(projects).values(p);
+      }
+    }
+  } catch (err) {
+    console.warn("[Database] Auto-bootstrap warning:", err);
+  }
+}

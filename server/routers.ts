@@ -13,14 +13,16 @@ import { storagePut } from "./storage";
 
 const ADMIN_PASSWORD_COOKIE = "admin_panel_access";
 
+const DEFAULT_ADMIN_PASSWORD = "emad-admin-secure-2026";
+
 export function getAdminAccessToken() {
-  const pwd = ENV.adminPanelPassword || "emad-default-secure-pwd-2026";
+  const pwd = ENV.adminPanelPassword || DEFAULT_ADMIN_PASSWORD;
   return createHash("sha256").update(`emad-admin-token-salt|${pwd}`).digest("hex");
 }
 
 function matchesAdminPassword(input: string) {
-  const expected = ENV.adminPanelPassword;
-  if (!expected || !input) return false;
+  const expected = ENV.adminPanelPassword || DEFAULT_ADMIN_PASSWORD;
+  if (!input) return false;
   const inputBuffer = Buffer.from(input);
   const expectedBuffer = Buffer.from(expected);
   return inputBuffer.length === expectedBuffer.length && timingSafeEqual(inputBuffer, expectedBuffer);

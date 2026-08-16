@@ -11,7 +11,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { storageGetSignedUrl } from "../storage";
-import { getSectionByKey } from "../db";
+import { getSectionByKey, ensureDatabaseInitialized } from "../db";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -33,8 +33,12 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 async function startServer() {
+  try {
+    await ensureDatabaseInitialized();
+  } catch (e) {
+    console.warn("[Database] Initialization failed:", e);
+  }
   const app = express();
-  app.set("trust proxy", 1);
   const server = createServer(app);
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
