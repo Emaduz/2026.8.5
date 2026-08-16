@@ -112,13 +112,13 @@ export const appRouter = router({
     verifyAdminPassword: publicProcedure.input(z.object({ password: z.string().min(1).max(256) })).mutation(({ input, ctx }) => {
       if (!matchesAdminPassword(input.password)) throw new TRPCError({ code: "UNAUTHORIZED", message: "Incorrect admin password" });
       const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.cookie(ADMIN_PASSWORD_COOKIE, getAdminAccessToken(), { ...cookieOptions, maxAge: ADMIN_SESSION_MAX_AGE_MS });
+      ctx.res.cookie(ADMIN_PASSWORD_COOKIE, getAdminAccessToken(), { ...cookieOptions, sameSite: "lax", maxAge: ADMIN_SESSION_MAX_AGE_MS });
       return { success: true } as const;
     }),
     verifyAdminCredentials: publicProcedure.input(z.object({ username: z.string().min(1).max(128), password: z.string().min(1).max(256) })).mutation(({ input, ctx }) => {
       if (!matchesAdminUsername(input.username) || !matchesAdminPassword(input.password)) throw new TRPCError({ code: "UNAUTHORIZED", message: "Incorrect username or password" });
       const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.cookie(ADMIN_PASSWORD_COOKIE, getAdminAccessToken(), { ...cookieOptions, maxAge: ADMIN_SESSION_MAX_AGE_MS });
+      ctx.res.cookie(ADMIN_PASSWORD_COOKIE, getAdminAccessToken(), { ...cookieOptions, sameSite: "lax", maxAge: ADMIN_SESSION_MAX_AGE_MS });
       return { success: true } as const;
     }),
     adminPasswordStatus: publicProcedure.query(({ ctx }) => ({ authenticated: getCookieValue(ctx.req, ADMIN_PASSWORD_COOKIE) === getAdminAccessToken() })),
