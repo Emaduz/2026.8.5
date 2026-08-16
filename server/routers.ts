@@ -14,7 +14,8 @@ import { storagePut } from "./storage";
 const ADMIN_PASSWORD_COOKIE = "admin_panel_access";
 
 export function getAdminAccessToken() {
-  return createHash("sha256").update(`${ENV.adminPanelPassword}|${ENV.cookieSecret}`).digest("hex");
+  const pwd = ENV.adminPanelPassword || "emad-default-secure-pwd-2026";
+  return createHash("sha256").update(`emad-admin-token-salt|${pwd}`).digest("hex");
 }
 
 function matchesAdminPassword(input: string) {
