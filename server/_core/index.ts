@@ -1,6 +1,8 @@
 import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
+import path from "path";
+import fs from "fs";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
@@ -46,13 +48,22 @@ async function startServer() {
     try {
       const configured = (await getSectionByKey("portrait"))?.imageUrl;
       const storageKey = configured?.startsWith("/manus-storage/") ? configured.slice("/manus-storage/".length) : "emad-portrait-new_81c16977.jpg";
-      const upstream = await fetch(await storageGetSignedUrl(storageKey));
-      if (!upstream.ok) {
-        res.status(404).end();
+      const signedUrl = await storageGetSignedUrl(storageKey).catch(() => null);
+      if (signedUrl) {
+        const upstream = await fetch(signedUrl);
+        if (upstream.ok) {
+          const bytes = Buffer.from(await upstream.arrayBuffer());
+          res.status(200).set({ "Content-Type": upstream.headers.get("content-type") || "image/jpeg", "Cache-Control": "public, max-age=86400", "X-Content-Type-Options": "nosniff" }).end(bytes);
+          return;
+        }
+      }
+      // Fallback: serve local static portrait asset if cloud storage fails or is unavailable
+      const localFallback = path.resolve(process.cwd(), "client/public/assets/portrait.jpg");
+      if (fs.existsSync(localFallback)) {
+        res.sendFile(localFallback);
         return;
       }
-      const bytes = Buffer.from(await upstream.arrayBuffer());
-      res.status(200).set({ "Content-Type": upstream.headers.get("content-type") || "image/png", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" }).end(bytes);
+      res.status(404).end();
     } catch {
       res.status(404).end();
     }
