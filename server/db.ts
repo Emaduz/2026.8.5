@@ -158,13 +158,15 @@ export const contentTables = { posts, projects, siteSections };
 
 
 
+import mysql from "mysql2/promise";
+
 export async function ensureDatabaseInitialized() {
   const db = await getDb();
   if (!db) return;
   try {
-    const conn = (db as any).session?.connection || (db as any).client;
-    if (conn && typeof conn.query === "function") {
-      await conn.query(`
+    if (process.env.DATABASE_URL) {
+      const connection = await mysql.createConnection(process.env.DATABASE_URL);
+      await connection.query(`
         CREATE TABLE IF NOT EXISTS users (
           id INT AUTO_INCREMENT PRIMARY KEY,
           openId VARCHAR(255) NOT NULL UNIQUE,
@@ -177,7 +179,7 @@ export async function ensureDatabaseInitialized() {
           lastSignedIn TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
-      await conn.query(`
+      await connection.query(`
         CREATE TABLE IF NOT EXISTS site_sections (
           id INT AUTO_INCREMENT PRIMARY KEY,
           \`key\` VARCHAR(64) NOT NULL UNIQUE,
@@ -194,7 +196,7 @@ export async function ensureDatabaseInitialized() {
           updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );
       `);
-      await conn.query(`
+      await connection.query(`
         CREATE TABLE IF NOT EXISTS projects (
           id INT AUTO_INCREMENT PRIMARY KEY,
           title VARCHAR(255) NOT NULL,
@@ -216,7 +218,7 @@ export async function ensureDatabaseInitialized() {
           updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );
       `);
-      await conn.query(`
+      await connection.query(`
         CREATE TABLE IF NOT EXISTS project_slides (
           id INT AUTO_INCREMENT PRIMARY KEY,
           projectId INT NOT NULL,
@@ -227,10 +229,12 @@ export async function ensureDatabaseInitialized() {
           descriptionEn TEXT,
           descriptionAr TEXT,
           imageUrl VARCHAR(1000) NOT NULL,
-          displayOrder INT DEFAULT 0
+          displayOrder INT DEFAULT 0,
+          createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );
       `);
-      await conn.query(`
+      await connection.query(`
         CREATE TABLE IF NOT EXISTS posts (
           id INT AUTO_INCREMENT PRIMARY KEY,
           title VARCHAR(255) NOT NULL,
@@ -250,6 +254,7 @@ export async function ensureDatabaseInitialized() {
           updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );
       `);
+      await connection.end();
     }
 
     const existingProjects = await db.select().from(projects).limit(1);
