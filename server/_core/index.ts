@@ -62,10 +62,22 @@ async function startServer() {
           return;
         }
       }
-      // Fallback: serve local static portrait asset if cloud storage fails or is unavailable
       const localFallback = path.resolve(process.cwd(), "client/public/assets/portrait.jpg");
       if (fs.existsSync(localFallback)) {
         res.sendFile(localFallback);
+        return;
+      }
+      res.status(404).end();
+    } catch {
+      res.status(404).end();
+    }
+  });
+
+  app.get("/api/logo", async (_req, res) => {
+    try {
+      const localLogo = path.resolve(process.cwd(), "client/public/assets/logo.png");
+      if (fs.existsSync(localLogo)) {
+        res.status(200).set({ "Content-Type": "image/png", "Cache-Control": "public, max-age=86400", "X-Content-Type-Options": "nosniff" }).sendFile(localLogo);
         return;
       }
       res.status(404).end();
