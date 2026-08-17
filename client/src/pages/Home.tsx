@@ -21,23 +21,25 @@ function FeaturedWorkCarousel({ projects, locale }: { projects: any[]; locale: "
   const groups = Array.from({ length: Math.ceil(projects.length / 3) }, (_, index) => projects.slice(index * 3, index * 3 + 3));
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!viewportRef.current) return;
-    dragRef.current = { active: true, startX: event.clientX, startScroll: viewportRef.current.scrollLeft };
-    viewportRef.current.setPointerCapture(event.pointerId);
-    setDragging(true);
+    dragRef.current = { active: false, startX: event.clientX, startScroll: viewportRef.current.scrollLeft };
   };
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragRef.current.active || !viewportRef.current) return;
-    viewportRef.current.scrollLeft = dragRef.current.startScroll - (event.clientX - dragRef.current.startX);
+    if (!viewportRef.current) return;
+    const dx = event.clientX - dragRef.current.startX;
+    if (Math.abs(dx) > 6) {
+      dragRef.current.active = true;
+      setDragging(true);
+      viewportRef.current.scrollLeft = dragRef.current.startScroll - dx;
+    }
   };
   const stopDragging = (event?: React.PointerEvent<HTMLDivElement>) => {
-    if (event && viewportRef.current?.hasPointerCapture(event.pointerId)) viewportRef.current.releasePointerCapture(event.pointerId);
     dragRef.current.active = false;
     setDragging(false);
   };
   return <div className={`featured-work-viewport ${dragging ? "is-dragging" : ""}`} ref={viewportRef} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={stopDragging} onPointerCancel={stopDragging} onPointerLeave={() => { if (dragRef.current.active) stopDragging(); }}>
     <div className="featured-work-track">{groups.map((group, groupIndex) => <div className="featured-work-board" key={`board-${groupIndex}`}>
-      {group[0] && <Link className="featured-work-main" href={`/portfolio/${group[0].id}`} draggable={false}><img src={group[0].imageUrl || ASSETS.corporate} alt={group[0].title} draggable={false} /><span className="featured-work-index">0{groupIndex * 3 + 1}</span><div className="featured-work-main-copy"><small>{group[0].category}</small><h3>{group[0].title}</h3><p>{group[0].description}</p><ArrowUpRight size={20} /></div></Link>}
-      <div className="featured-work-stack">{group.slice(1).map((project, projectIndex) => <Link className="featured-work-side" href={`/portfolio/${project.id}`} key={project.id} draggable={false}><div><img src={project.imageUrl || ASSETS.corporate} alt={project.title} draggable={false} /><span className="featured-work-index">0{groupIndex * 3 + projectIndex + 2}</span></div><div className="featured-work-side-copy"><small>{project.category}</small><h3>{project.title}</h3><ArrowUpRight size={17} /></div></Link>)}</div>
+      {group[0] && <Link className="featured-work-main" href={`/portfolio/${group[0].id}`} onClick={(e) => { if (dragging) e.preventDefault(); }}><img src={group[0].imageUrl && group[0].imageUrl.startsWith("http") ? group[0].imageUrl : (group[0].imageUrl || ASSETS.corporate)} alt={group[0].title} /><span className="featured-work-index">0{groupIndex * 3 + 1}</span><div className="featured-work-main-copy"><small>{group[0].category}</small><h3>{group[0].title}</h3><p>{group[0].description}</p><ArrowUpRight size={20} /></div></Link>}
+      <div className="featured-work-stack">{group.slice(1).map((project, projectIndex) => <Link className="featured-work-side" href={`/portfolio/${project.id}`} key={project.id} onClick={(e) => { if (dragging) e.preventDefault(); }}><div><img src={project.imageUrl && project.imageUrl.startsWith("http") ? project.imageUrl : (project.imageUrl || ASSETS.corporate)} alt={project.title} /><span className="featured-work-index">0{groupIndex * 3 + projectIndex + 2}</span></div><div className="featured-work-side-copy"><small>{project.category}</small><h3>{project.title}</h3><ArrowUpRight size={17} /></div></Link>)}</div>
     </div>)}</div>
     <div className="featured-work-hint"><span>{locale === "ar" ? "اسحب لاستعراض الأعمال" : "Drag to explore the work"}</span><span aria-hidden="true">← →</span></div>
   </div>;
