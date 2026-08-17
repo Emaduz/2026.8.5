@@ -80,7 +80,9 @@ async function startServer() {
         res.status(200).set({ "Content-Type": "image/png", "Cache-Control": "public, max-age=86400", "X-Content-Type-Options": "nosniff" }).sendFile(localLogo);
         return;
       }
-      res.status(404).end();
+      // Fallback: generate a clean SVG logo on the fly if logo.png is missing
+      const svgLogo = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40" viewBox="0 0 120 40"><rect width="120" height="40" fill="#8f1819" rx="8"/><text x="60" y="25" fill="#fff" font-family="Rubik, sans-serif" font-size="16" font-weight="bold" text-anchor="middle">EMAD</text></svg>`;
+      res.status(200).set({ "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age=86400", "X-Content-Type-Options": "nosniff" }).send(svgLogo);
     } catch {
       res.status(404).end();
     }
