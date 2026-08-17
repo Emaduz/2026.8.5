@@ -36,14 +36,21 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
     return () => window.removeEventListener("scroll", updateProgress);
   }, [location]);
   useEffect(() => {
-    const revealItems = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
-    if (!revealItems.length) return;
-    if (!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches && "IntersectionObserver" in window) {
-      const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { (entry.target as HTMLElement).classList.add("is-visible"); observer.unobserve(entry.target); } }), { threshold: 0.14, rootMargin: "0px 0px -8% 0px" });
-      revealItems.forEach(item => observer.observe(item));
-      return () => observer.disconnect();
-    }
-    revealItems.forEach(item => item.classList.add("is-visible"));
+    const timer = setTimeout(() => {
+      const revealItems = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+      if (!revealItems.length) return;
+      if (!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches && "IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { (entry.target as HTMLElement).classList.add("is-visible"); observer.unobserve(entry.target); } }), { threshold: 0.01, rootMargin: "200px 0px 200px 0px" });
+        revealItems.forEach(item => observer.observe(item));
+        // Force visible after a short fallback so no image remains hidden
+        const fallbackTimer = setTimeout(() => {
+          revealItems.forEach(item => item.classList.add("is-visible"));
+        }, 350);
+        return () => { observer.disconnect(); clearTimeout(fallbackTimer); };
+      }
+      revealItems.forEach(item => item.classList.add("is-visible"));
+    }, 50);
+    return () => clearTimeout(timer);
   }, [location]);
 
   const socialLinks = useMemo(() => ({ instagram: links.instagram || "https://instagram.com/emadalddine", linkedin: links.linkedin || "https://linkedin.com/in/emadalddine", behance: links.behance || "https://behance.net/emadalddine" }), [links.instagram, links.linkedin, links.behance]);
