@@ -7,7 +7,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 
 function section(data: any, key: string) { return data?.sections?.find((item: any) => item.key === key); }
 function parseLinks(content?: string) { try { return content ? JSON.parse(content) : {}; } catch { return {}; } }
-const ASSETS = { logo: "/manus-storage/logo_71186596.png" };
+const ASSETS = { logo: "/api/logo" };
 
 const referenceCopy = {
   en: {
@@ -122,7 +122,9 @@ export default function Contact() {
         </div>
 
         <div className="contact-reference-profile-card">
-          <div className="contact-reference-profile-portrait contact-reference-profile-logo"><img src={ASSETS.logo} alt={locale === "ar" ? "شعار عماد الدين" : "EmadAlddine logo"} draggable={false} /></div>
+          <div className="contact-reference-profile-portrait contact-reference-profile-logo" style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#fdfbf7" }}>
+            <img src={ASSETS.logo} alt={locale === "ar" ? "شعار عماد الدين" : "EmadAlddine logo"} draggable={false} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          </div>
           <div className="contact-reference-profile-copy"><h2>Eng.EmadAlddine</h2><p>{copy.profileRole}</p><span><Clock3 size={14} />{copy.response}</span></div>
           <div className="contact-reference-profile-actions"><a className="button button-primary" href={whatsappHref} target="_blank" rel="noreferrer"><MessageCircle size={16} />{copy.quickChat}</a><a className="button button-ghost" href={`tel:${phone.replace(/\s/g, "")}`}><Phone size={16} />{copy.callNow}</a></div>
         </div>
