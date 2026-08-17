@@ -1,8 +1,18 @@
-// Preconfigured storage helpers for Manus WebDev templates
-// Uploads via Forge Server presigned URL to S3 (PUT direct).
-// Downloads return /manus-storage/{key} paths served via 307 redirect.
-
 import { ENV } from "./_core/env";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+function getR2Config() {
+  const endpoint = process.env.R2_ENDPOINT || process.env.CLOUDFLARE_R2_ENDPOINT;
+  const accessKeyId = process.env.R2_ACCESS_KEY_ID || process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY || process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
+  const bucketName = process.env.R2_BUCKET_NAME || process.env.CLOUDFLARE_R2_BUCKET_NAME || "emadalddine-media";
+  const publicDomain = process.env.R2_PUBLIC_DOMAIN || process.env.CLOUDFLARE_R2_PUBLIC_DOMAIN || "media.emadalddine.com";
+
+  if (endpoint && accessKeyId && secretAccessKey) {
+    return { endpoint, accessKeyId, secretAccessKey, bucketName, publicDomain };
+  }
+  return null;
+}
 
 function getForgeConfig() {
   const forgeUrl = ENV.forgeApiUrl;
@@ -33,8 +43,41 @@ export async function storagePut(
   data: Buffer | Uint8Array | string,
   contentType = "application/octet-stream",
 ): Promise<{ key: string; url: string }> {
-  const { forgeUrl, forgeKey } = getForgeConfig();
   const key = appendHashSuffix(normalizeKey(relKey));
+  const r2 = getR2Config();
+
+  if (r2) {
+    try {
+      const s3Client = new S3Client({
+        region: "auto",
+        endpoint: r2.endpoint,
+        credentials: {
+          accessKeyId: r2.accessKeyId,
+          secretAccessKey: r2.secretAccessKey,
+        },
+      });
+
+      const buffer = typeof data === "string" ? Buffer.from(data) : Buffer.from(data as any);
+
+      await s3Client.send(
+        new PutObjectCommand({
+          Bucket: r2.bucketName,
+          Key: key,
+          Body: buffer,
+          ContentType: contentType,
+        })
+      );
+
+      const cleanDomain = r2.publicDomain.replace(/\/+$/, "");
+      const publicUrl = cleanDomain.startsWith("http") ? `${cleanDomain}/${key}` : `https://${cleanDomain}/${key}`;
+
+      return { key, url: publicUrl };
+    } catch (err) {
+      console.error("[R2 Storage] Upload failed, falling back to forge storage:", err);
+    }
+  }
+
+  const { forgeUrl, forgeKey } = getForgeConfig();
 
   // 1. Get presigned PUT URL from Forge
   const presignUrl = new URL("v1/storage/presign/put", forgeUrl + "/");
@@ -73,13 +116,24 @@ export async function storagePut(
 
 export async function storageGet(relKey: string): Promise<{ key: string; url: string }> {
   const key = normalizeKey(relKey);
+  const r2 = getR2Config();
+  if (r2) {
+    const cleanDomain = r2.publicDomain.replace(/\/+$/, "");
+    const publicUrl = cleanDomain.startsWith("http") ? `${cleanDomain}/${key}` : `https://${cleanDomain}/${key}`;
+    return { key, url: publicUrl };
+  }
   return { key, url: `/manus-storage/${key}` };
 }
 
 export async function storageGetSignedUrl(relKey: string): Promise<string> {
-  const { forgeUrl, forgeKey } = getForgeConfig();
   const key = normalizeKey(relKey);
+  const r2 = getR2Config();
+  if (r2) {
+    const cleanDomain = r2.publicDomain.replace(/\/+$/, "");
+    return cleanDomain.startsWith("http") ? `${cleanDomain}/${key}` : `https://${cleanDomain}/${key}`;
+  }
 
+  const { forgeUrl, forgeKey } = getForgeConfig();
   const getUrl = new URL("v1/storage/presign/get", forgeUrl + "/");
   getUrl.searchParams.set("path", key);
 

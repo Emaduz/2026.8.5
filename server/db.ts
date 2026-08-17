@@ -25,8 +25,9 @@ function requireDb(db: ReturnType<typeof drizzle> | null) {
 }
 
 function localOnlySlides(project: Project, slides: ProjectSlide[]) {
-  const localCover = typeof project.imageUrl === "string" && project.imageUrl.startsWith("/manus-storage/") ? project.imageUrl : null;
-  return slides.map(slide => ({ ...slide, imageUrl: typeof slide.imageUrl === "string" && slide.imageUrl.startsWith("/manus-storage/") ? slide.imageUrl : localCover }));
+  const isValidUrl = (url: unknown) => typeof url === "string" && url.length > 0 && (url.startsWith("/manus-storage/") || url.startsWith("http://") || url.startsWith("https://") || url.startsWith("/api/"));
+  const cover = isValidUrl(project.imageUrl) ? project.imageUrl : null;
+  return slides.map(slide => ({ ...slide, imageUrl: isValidUrl(slide.imageUrl) ? slide.imageUrl : cover }));
 }
 
 export async function upsertUser(user: UserInsert): Promise<void> {

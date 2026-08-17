@@ -118,6 +118,21 @@ export const appRouter = router({
       ctx.res.cookie(ADMIN_PASSWORD_COOKIE, getAdminAccessToken(), { ...cookieOptions, sameSite: "lax", maxAge: ADMIN_SESSION_MAX_AGE_MS });
       return { success: true } as const;
     }),
+    uploadFile: ownerProcedure.input(z.object({
+      filename: z.string().min(1).max(255),
+      contentType: z.string().min(1).max(128),
+      base64Data: z.string().min(1),
+    })).mutation(async ({ input }) => {
+      const buffer = Buffer.from(input.base64Data, "base64");
+      // Check limits: 15MB for PDF, 12MB for images
+      const isPdf = input.contentType.includes("pdf");
+      const maxSize = isPdf ? 15 * 1024 * 1024 : 12 * 1024 * 1024;
+      if (buffer.length > maxSize) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: `File size exceeds limit (${isPdf ? "15MB" : "12MB"})` });
+      }
+      const result = await storagePut(input.filename, buffer, input.contentType);
+      return { url: result.url, key: result.key };
+    }),
     verifyAdminCredentials: publicProcedure.input(z.object({ username: z.string().min(1).max(128), password: z.string().min(1).max(256) })).mutation(({ input, ctx }) => {
       if (!matchesAdminUsername(input.username) || !matchesAdminPassword(input.password)) throw new TRPCError({ code: "UNAUTHORIZED", message: "Incorrect username or password" });
       const cookieOptions = getSessionCookieOptions(ctx.req);
