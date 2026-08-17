@@ -16,21 +16,26 @@ function parseJson(value: unknown) { try { return JSON.parse(String(value || "nu
 
 function FeaturedWorkCarousel({ projects, locale }: { projects: any[]; locale: "en" | "ar" }) {
   const viewportRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef({ active: false, startX: 0, startScroll: 0 });
+  const dragRef = useRef({ active: false, startX: 0, startScroll: 0, hasMoved: false });
   const [dragging, setDragging] = useState(false);
   const groups = Array.from({ length: Math.ceil(projects.length / 3) }, (_, index) => projects.slice(index * 3, index * 3 + 3));
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!viewportRef.current) return;
-    dragRef.current = { active: true, startX: event.clientX, startScroll: viewportRef.current.scrollLeft };
+    dragRef.current = { active: true, startX: event.clientX, startScroll: viewportRef.current.scrollLeft, hasMoved: false };
     try {
       viewportRef.current.setPointerCapture(event.pointerId);
     } catch {}
-    setDragging(true);
   };
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!dragRef.current.active || !viewportRef.current) return;
     const dx = event.clientX - dragRef.current.startX;
-    viewportRef.current.scrollLeft = dragRef.current.startScroll - dx;
+    if (Math.abs(dx) > 6) {
+      dragRef.current.hasMoved = true;
+      setDragging(true);
+    }
+    if (dragRef.current.hasMoved) {
+      viewportRef.current.scrollLeft = dragRef.current.startScroll - dx;
+    }
   };
   const stopDragging = (event?: React.PointerEvent<HTMLDivElement>) => {
     if (event && viewportRef.current) {
@@ -40,7 +45,7 @@ function FeaturedWorkCarousel({ projects, locale }: { projects: any[]; locale: "
         }
       } catch {}
     }
-    if (dragRef.current.active && viewportRef.current) {
+    if (dragRef.current.active && dragRef.current.hasMoved && viewportRef.current) {
       // Snap to nearest board
       const boards = Array.from(viewportRef.current.querySelectorAll('.featured-work-board')) as HTMLElement[];
       if (boards.length > 0) {
@@ -58,12 +63,13 @@ function FeaturedWorkCarousel({ projects, locale }: { projects: any[]; locale: "
       }
     }
     dragRef.current.active = false;
+    dragRef.current.hasMoved = false;
     setDragging(false);
   };
   return <div className={`featured-work-viewport ${dragging ? "is-dragging" : ""}`} ref={viewportRef} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={stopDragging} onPointerCancel={stopDragging} onPointerLeave={() => { if (dragRef.current.active) stopDragging(); }}>
     <div className="featured-work-track">{groups.map((group, groupIndex) => <div className="featured-work-board" key={`board-${groupIndex}`}>
-      {group[0] && <Link className="featured-work-main" href={`/portfolio/${group[0].id}`} onClick={(e) => { if (dragging) e.preventDefault(); }}><img src={group[0].imageUrl && (group[0].imageUrl.startsWith("http") || group[0].imageUrl.startsWith("/")) ? group[0].imageUrl : ASSETS.corporate} alt={group[0].title} onError={(e)=>{ (e.currentTarget as HTMLImageElement).src = ASSETS.corporate; }} /><span className="featured-work-index">0{groupIndex * 3 + 1}</span><div className="featured-work-main-copy"><small>{group[0].category}</small><h3>{group[0].title}</h3><p>{group[0].description}</p><ArrowUpRight size={20} /></div></Link>}
-      <div className="featured-work-stack">{group.slice(1).map((project, projectIndex) => <Link className="featured-work-side" href={`/portfolio/${project.id}`} key={project.id} onClick={(e) => { if (dragging) e.preventDefault(); }}><div><img src={project.imageUrl && (project.imageUrl.startsWith("http") || project.imageUrl.startsWith("/")) ? project.imageUrl : ASSETS.corporate} alt={project.title} onError={(e)=>{ (e.currentTarget as HTMLImageElement).src = ASSETS.corporate; }} /><span className="featured-work-index">0{groupIndex * 3 + projectIndex + 2}</span></div><div className="featured-work-side-copy"><small>{project.category}</small><h3>{project.title}</h3><ArrowUpRight size={17} /></div></Link>)}</div>
+      {group[0] && <Link className="featured-work-main" href={`/portfolio/${group[0].id}`} onClick={(e) => { if (dragging) { e.preventDefault(); e.stopPropagation(); } }}><img src={group[0].imageUrl && (group[0].imageUrl.startsWith("http") || group[0].imageUrl.startsWith("/")) ? group[0].imageUrl : ASSETS.corporate} alt={group[0].title} onError={(e)=>{ (e.currentTarget as HTMLImageElement).src = ASSETS.corporate; }} /><span className="featured-work-index">0{groupIndex * 3 + 1}</span><div className="featured-work-main-copy"><small>{group[0].category}</small><h3>{group[0].title}</h3><p>{group[0].description}</p><ArrowUpRight size={20} /></div></Link>}
+      <div className="featured-work-stack">{group.slice(1).map((project, projectIndex) => <Link className="featured-work-side" href={`/portfolio/${project.id}`} key={project.id} onClick={(e) => { if (dragging) { e.preventDefault(); e.stopPropagation(); } }}><div><img src={project.imageUrl && (project.imageUrl.startsWith("http") || project.imageUrl.startsWith("/")) ? project.imageUrl : ASSETS.corporate} alt={project.title} onError={(e)=>{ (e.currentTarget as HTMLImageElement).src = ASSETS.corporate; }} /><span className="featured-work-index">0{groupIndex * 3 + projectIndex + 2}</span></div><div className="featured-work-side-copy"><small>{project.category}</small><h3>{project.title}</h3><ArrowUpRight size={17} /></div></Link>)}</div>
     </div>)}</div>
     <div className="featured-work-hint"><span>{locale === "ar" ? "اسحب لاستعراض الأعمال" : "Drag to explore the work"}</span><span aria-hidden="true">← →</span></div>
   </div>;
