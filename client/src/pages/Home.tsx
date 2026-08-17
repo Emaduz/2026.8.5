@@ -21,18 +21,42 @@ function FeaturedWorkCarousel({ projects, locale }: { projects: any[]; locale: "
   const groups = Array.from({ length: Math.ceil(projects.length / 3) }, (_, index) => projects.slice(index * 3, index * 3 + 3));
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!viewportRef.current) return;
-    dragRef.current = { active: false, startX: event.clientX, startScroll: viewportRef.current.scrollLeft };
+    dragRef.current = { active: true, startX: event.clientX, startScroll: viewportRef.current.scrollLeft };
+    try {
+      viewportRef.current.setPointerCapture(event.pointerId);
+    } catch {}
+    setDragging(true);
   };
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!viewportRef.current) return;
+    if (!dragRef.current.active || !viewportRef.current) return;
     const dx = event.clientX - dragRef.current.startX;
-    if (Math.abs(dx) > 6) {
-      dragRef.current.active = true;
-      setDragging(true);
-      viewportRef.current.scrollLeft = dragRef.current.startScroll - dx;
-    }
+    viewportRef.current.scrollLeft = dragRef.current.startScroll - dx;
   };
   const stopDragging = (event?: React.PointerEvent<HTMLDivElement>) => {
+    if (event && viewportRef.current) {
+      try {
+        if (viewportRef.current.hasPointerCapture(event.pointerId)) {
+          viewportRef.current.releasePointerCapture(event.pointerId);
+        }
+      } catch {}
+    }
+    if (dragRef.current.active && viewportRef.current) {
+      // Snap to nearest board
+      const boards = Array.from(viewportRef.current.querySelectorAll('.featured-work-board')) as HTMLElement[];
+      if (boards.length > 0) {
+        const currentScroll = viewportRef.current.scrollLeft;
+        let closestBoard = boards[0];
+        let minDiff = Math.abs(boards[0].offsetLeft - currentScroll);
+        for (const b of boards) {
+          const diff = Math.abs(b.offsetLeft - currentScroll);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestBoard = b;
+          }
+        }
+        viewportRef.current.scrollTo({ left: closestBoard.offsetLeft, behavior: 'smooth' });
+      }
+    }
     dragRef.current.active = false;
     setDragging(false);
   };
