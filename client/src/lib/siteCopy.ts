@@ -150,11 +150,11 @@ export const siteCopy = {
       }
     ],
     testimonials: [
-      { quote: "Working with you was seamless and inspiring. The design feels intentional, sharp, and very easy to use.", name: "Maya Chen", role: "Co-Founder at Clarity App", avatar: "/manus-storage/testimonial-1_c33e39f0.jpg" },
-      { quote: "You made our platform not only beautiful but also easier to navigate. I felt heard, and the result reflects that.", name: "Leo Dimas", role: "Product Manager at Nova Tools", avatar: "/manus-storage/testimonial-2_8e7aa400.jpg" },
-      { quote: "From wireframes to final prototypes, everything was delivered with care and clarity. Would definitely collaborate again!", name: "Alia Reeve", role: "Design Lead at Orbit Agency", avatar: "/manus-storage/testimonial-3_2f16b717.jpg" },
-      { quote: "You understood our vision better than we did. Every screen felt like it had a purpose, and the UI decisions made our app feel alive.", name: "Jon Rivas", role: "Founder of Movewell", avatar: "/manus-storage/testimonial-4_06551d24.jpg" },
-      { quote: "Honestly one of the most thoughtful designers I’ve worked with. You asked the right questions, challenged assumptions, and delivered a user-friendly interface.", name: "Selina Park", role: "Marketing Director at B+ Studio", avatar: "/manus-storage/testimonial-5_03af8f15.jpg" }
+      { quote: "Working with you was seamless and inspiring. The design feels intentional, sharp, and very easy to use.", name: "Maya Chen", role: "Co-Founder at Clarity App", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" },
+      { quote: "You made our platform not only beautiful but also easier to navigate. I felt heard, and the result reflects that.", name: "Leo Dimas", role: "Product Manager at Nova Tools", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200" },
+      { quote: "From wireframes to final prototypes, everything was delivered with care and clarity. Would definitely collaborate again!", name: "Alia Reeve", role: "Design Lead at Orbit Agency", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=200" },
+      { quote: "You understood our vision better than we did. Every screen felt like it had a purpose, and the UI decisions made our app feel alive.", name: "Jon Rivas", role: "Founder of Movewell", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200" },
+      { quote: "Honestly one of the most thoughtful designers I’ve worked with. You asked the right questions, challenged assumptions, and delivered a user-friendly interface.", name: "Selina Park", role: "Marketing Director at B+ Studio", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200" }
     ],
     processSteps: [
       { number: "01", title: "Discover", description: "We clarify the idea, audience, and opportunity before making anything." },

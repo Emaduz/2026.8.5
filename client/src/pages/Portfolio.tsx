@@ -7,14 +7,14 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { localizeProject, siteCopy } from "@/lib/siteCopy";
 
 const fallbackImages = [
-  "/manus-storage/06551d240072049.693708b93fbdf_50482b65.jpeg",
-  "/manus-storage/03af8f154753213.6347e1e6a3468_2f3fc650.jpg",
-  "/manus-storage/05070c210092607.670b6931a7ce1_f87bf103.jpg",
-  "/manus-storage/bf247b199510245.66532c1d1bdf2_167a4d14.jpg",
-  "/manus-storage/12df36192992769.65e4cc0a1faff_34db79f8.jpg",
-  "/manus-storage/0b21ed156295027.636447c7d6063_b33c2e3e.jpg",
-  "/manus-storage/9a21ef159472965.639f7bab2c17b_06a8ccf4.jpg",
-  "/manus-storage/11f546212641103.6738797cb0e7f_93ed645f.jpeg",
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1542744094-3a31243364d0?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1512486130939-2c4f79935e4f?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1535223289827-42f1e9919769?auto=format&fit=crop&q=80&w=800",
 ];
 
 export const fallbackProjects = [
