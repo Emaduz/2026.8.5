@@ -7,7 +7,7 @@ import { isActiveRoute } from "@/lib/navigationInteractions";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useTheme } from "@/contexts/ThemeContext";
 
-const ASSETS = { logo: "/manus-storage/logo_71186596.png" };
+const ASSETS = { logo: "/api/logo" };
 export const navItems = [["Home", "/"], ["Portfolio", "/portfolio"], ["About", "/about"], ["Services", "/services"], ["Contact", "/contact"]] as const;
 
 function getSection(sections: any[] | undefined, key: string) { return sections?.find(section => section.key === key); }
@@ -53,7 +53,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
     <div className="scroll-progress" style={{ width: `${scrollProgress}%` }} aria-hidden="true" />
     <header className="site-header site-header-solid">
       <div className="site-shell header-inner">
-        <Link href="/" className="brand-lockup" onClick={() => setMobileOpen(false)} aria-label={t.home}><span className="brand-mark"><img src={ASSETS.logo} alt="EmadAlddine Logo" /></span><span className="brand-copy"><strong>Eng.EmadAlddine</strong><small>{t.seniorDesigner}</small></span></Link>
+        <Link href="/" className="brand-lockup" onClick={() => setMobileOpen(false)} aria-label={t.home}><span className="brand-mark"><img src={ASSETS.logo} alt="EmadAlddine Logo" onError={(e)=>{ (e.currentTarget as HTMLImageElement).src = "/assets/logo.png"; }} /></span><span className="brand-copy"><strong>Eng.EmadAlddine</strong><small>{t.seniorDesigner}</small></span></Link>
         <nav className={`main-nav ${mobileOpen ? "is-open" : ""}`} aria-label="Main navigation">{navItems.map(([label, href]) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className={isActiveRoute(location, href) ? "is-active" : ""}>{labels[label]}</Link>)}</nav>
         <div className="header-actions">
           <button className="header-pill" onClick={toggleLocale} aria-label={t.switchLanguage} title={t.switchLanguage}><Globe2 size={15} /><span>{locale === "en" ? "عربي" : "EN"}</span></button>
@@ -65,7 +65,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
     <main className="page-transition" key={location}>{children}</main>
     <a className="whatsapp-float" href={whatsappHref} target="_blank" rel="noreferrer" aria-label={t.whatsapp}><span className="whatsapp-float-icon" aria-hidden="true"><MessageCircle size={22} /></span><span className="whatsapp-float-label">{t.whatsapp}</span></a>
     <footer className="site-footer">
-      <div className="site-shell footer-grid"><div className="footer-brand"><span className="brand-mark"><img src={ASSETS.logo} alt="EmadAlddine Logo" /></span><div><h3>Eng.EmadAlddine</h3><span>{t.seniorDesigner}</span></div><p>{aboutText}</p></div><div className="footer-column"><span className="footer-label">{locale === "ar" ? "تواصل" : "Contact"}</span><a href={`mailto:${email}`}><Mail size={15} />{email}</a><a href={`tel:${phone.replaceAll(" ", "")}`}><MessageCircle size={15} /><span dir="ltr" className="phone-ltr">{phone}</span></a><span><MapPin size={15} />{address}</span></div><div className="footer-column"><span className="footer-label">{locale === "ar" ? "تابعني" : "Follow me"}</span><a href={socialLinks.instagram} target="_blank" rel="noreferrer"><Instagram size={15} />Instagram</a><a href={socialLinks.linkedin} target="_blank" rel="noreferrer"><Linkedin size={15} />LinkedIn</a><a href={socialLinks.behance} target="_blank" rel="noreferrer"><BehanceMark size={15} />Behance</a></div></div>
+      <div className="site-shell footer-grid"><div className="footer-brand"><span className="brand-mark"><img src={ASSETS.logo} alt="EmadAlddine Logo" onError={(e)=>{ (e.currentTarget as HTMLImageElement).src = "/assets/logo.png"; }} /></span><div><h3>Eng.EmadAlddine</h3><span>{t.seniorDesigner}</span></div><p>{aboutText}</p></div><div className="footer-column"><span className="footer-label">{locale === "ar" ? "تواصل" : "Contact"}</span><a href={`mailto:${email}`}><Mail size={15} />{email}</a><a href={`tel:${phone.replaceAll(" ", "")}`}><MessageCircle size={15} /><span dir="ltr" className="phone-ltr">{phone}</span></a><span><MapPin size={15} />{address}</span></div><div className="footer-column"><span className="footer-label">{locale === "ar" ? "تابعني" : "Follow me"}</span><a href={socialLinks.instagram} target="_blank" rel="noreferrer"><Instagram size={15} />Instagram</a><a href={socialLinks.linkedin} target="_blank" rel="noreferrer"><Linkedin size={15} />LinkedIn</a><a href={socialLinks.behance} target="_blank" rel="noreferrer"><BehanceMark size={15} />Behance</a></div></div>
       <div className="site-shell footer-bottom"><span>© 2026 Eng.EmadAlddine. {locale === "ar" ? "جميع الحقوق محفوظة." : "All rights reserved."}</span><span>{locale === "ar" ? "صُمم بقصد." : "Built with intention."}</span></div>
     </footer>
   </div>;
