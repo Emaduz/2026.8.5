@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import SiteChrome from "@/components/SiteChrome";
 import { trpc } from "@/lib/trpc";
@@ -17,6 +17,13 @@ export default function ProjectDetail() {
   const project = localizeProject(data || fallback, locale);
   const slides = project?.slides?.length ? project.slides : project ? [{ id: 1, title: project.title, description: project.description, imageUrl: project.imageUrl, displayOrder: 0 }] : [];
   const isArabic = locale === "ar";
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      document.querySelectorAll(".project-detail-page [data-reveal]").forEach(el => el.classList.add("is-visible"));
+    }, 60);
+    return () => clearTimeout(timer);
+  }, [project, slides]);
 
   if (isLoading && !fallback) return <SiteChrome><div className="project-detail-loading site-shell">{isArabic ? "جاري تحميل المشروع..." : "Loading project..."}</div></SiteChrome>;
   if (!project) return <SiteChrome><div className="project-detail-loading site-shell"><h1>{isArabic ? "المشروع غير موجود" : "Project not found"}</h1><Link href="/portfolio" className="button button-primary">{isArabic ? "العودة إلى الأعمال" : "Back to portfolio"}<ArrowUpRight size={17} /></Link></div></SiteChrome>;
@@ -37,7 +44,7 @@ export default function ProjectDetail() {
             <article className="project-detail-grid-card" key={slide.id || index} data-reveal="media" data-slide-index={index}>
               <div className="project-detail-grid-number">0{index + 1}</div>
               <div className="project-detail-grid-image" onClick={() => setLightboxIndex(index)} role="button" tabIndex={0} aria-label={isArabic ? "تكبير الصورة" : "Zoom image"}>
-                <img src={slide.imageUrl || project.imageUrl} alt={slide.title || project.title} loading="lazy" />
+                <img src={slide.imageUrl || project.imageUrl} alt={slide.title || project.title} loading="eager" decoding="async" />
                 <div className="project-detail-grid-zoom-badge"><ZoomIn size={16} /></div>
               </div>
               <div className="project-detail-grid-copy">
