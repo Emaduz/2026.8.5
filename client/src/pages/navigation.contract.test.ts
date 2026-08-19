@@ -21,13 +21,13 @@ describe("public navigation and portfolio contracts", () => {
     expect(getWheelDirection(4, 0)).toBe(0);
     expect(getWheelDirection(40, 60)).toBe(0);
   });
-  it("uses the adjacent-card project detail presentation contract", () => {
+  it("uses the responsive grid project detail presentation contract", () => {
     const source = readFileSync(resolve(process.cwd(), "client/src/pages/ProjectDetail.tsx"), "utf8");
     const css = readFileSync(resolve(process.cwd(), "client/src/index.css"), "utf8");
-    expect(source).toContain("project-detail-slides");
-    expect(source).toContain("project-detail-scroll-actions");
-    expect(css).toContain("scroll-snap-type: x mandatory");
-    expect(css).toContain("flex: 0 0 min(610px, 68vw)");
+    expect(source).toContain("project-detail-grid-container");
+    expect(source).toContain("project-lightbox-overlay");
+    expect(css).toContain("project-detail-grid-container");
+    expect(css).toContain("project-lightbox-overlay");
   });
   it("keeps the requested eight projects available as card/detail data", () => {
     expect(fallbackProjects).toHaveLength(8);
