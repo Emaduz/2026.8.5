@@ -36,10 +36,52 @@ export default function Portfolio() {
   const projects = rawProjects.map(project => localizeProject(project, locale));
 
   return <SiteChrome>
-    <div className="inner-page portfolio-page">
-      <section className="inner-hero site-shell" data-reveal="hero"><div><span className="eyebrow"><span className="eyebrow-line" /> {copy.home.selected}</span><h1>{locale === "ar" ? "أعمال" : "Projects with"}<br /><span>{locale === "ar" ? "وجهة نظر." : "a point of view."}</span></h1><p>{locale === "ar" ? "استعرض مجموعة مختارة من مشاريع الهوية والشعارات والتصميم الطباعي المصممة بوضوح وأثر طويل." : "Explore a curated selection of identity, logo, and print work crafted for clarity and lasting recognition."}</p></div><div className="inner-hero-mark"><Layers3 size={24} /><span>{String(projects.length).padStart(2, "0")}<br />{locale === "ar" ? "مشاريع مختارة" : "selected projects"}</span></div></section>
-      <section className="portfolio-grid-section site-shell" data-reveal><div className="portfolio-grid-heading"><div><span className="eyebrow">{locale === "ar" ? "المعرض" : "The portfolio"}</span><h2>{locale === "ar" ? "كل مشروع يبدأ بفكرة." : "Each project starts with an idea."}</h2></div><p>{locale === "ar" ? "اختر أي مشروع لاستعراض القصة البصرية والتطبيقات والتفاصيل." : "Choose a project to explore its visual story, applications, and details."}</p></div>{isLoading ? <div className="loading-line">{locale === "ar" ? "جاري تحميل الأعمال..." : "Loading the latest work..."}</div> : <div className="portfolio-project-grid" data-reveal="stagger">{projects.map((project: any, index: number) => <article className={`portfolio-project-card portfolio-project-card-${(index % 3) + 1}`} key={project.id} data-reveal="media"><Link href={`/portfolio/${project.id}`} className="portfolio-project-link"><div className="portfolio-project-image"><img src={project.imageUrl || fallbackImages[index % fallbackImages.length]} alt={project.title} /><span className="portfolio-project-index">{String(index + 1).padStart(2, "0")}</span><span className="portfolio-project-view">{locale === "ar" ? "عرض المشروع" : "View project"}<ArrowUpRight size={16} /></span></div><div className="portfolio-project-copy"><span className="eyebrow">{project.category}</span><h3>{project.title}</h3><p>{project.description}</p></div></Link></article>)}</div>}</section>
-      <section className="portfolio-note" data-reveal><div className="site-shell"><span className="eyebrow eyebrow-light">{locale === "ar" ? "صنع بقصد" : "Built with intention"}</span><h2>{locale === "ar" ? <>التصميم الجيد يجعل<br /><em>الأفكار أسهل في التذكر.</em></> : <>Good design makes<br /><em>ideas easier to remember.</em></>}</h2><p>{locale === "ar" ? "كل مشروع يبدأ بسؤال، ثم يتحول إلى نظام بصري يعمل في العالم الحقيقي." : "Every project starts with a question, then becomes a visual system made to work in the real world."}</p><Link href="/contact" className="button button-light">{locale === "ar" ? "ابدأ مشروعاً" : "Start a project"}<ArrowUpRight size={17} /></Link></div></section>
+    <div className="inner-page portfolio-page bazil-photos-layout">
+      <section className="bazil-hero site-shell" data-reveal="hero">
+        <div className="bazil-hero-content">
+          <span className="eyebrow"><span className="eyebrow-line" /> {copy.home.selected}</span>
+          <h1>{locale === "ar" ? "أعمال وجهة نظر." : "Projects with a point of view."}</h1>
+          <p>{locale === "ar" ? "استعرض مجموعة مختارة من مشاريع الهوية والشعارات والتصميم الطباعي المصممة بوضوح وأثر طويل." : "Explore a curated selection of identity, logo, and print work crafted for clarity and lasting recognition."}</p>
+        </div>
+        <div className="bazil-hero-ornament">
+          <span className="bazil-ornament-line" />
+          <span className="bazil-ornament-dot" />
+        </div>
+      </section>
+
+      <section className="bazil-gallery-section site-shell" data-reveal>
+        {isLoading ? (
+          <div className="loading-line">{locale === "ar" ? "جاري تحميل الأعمال..." : "Loading the latest work..."}</div>
+        ) : (
+          <div className="bazil-photos-grid" data-reveal="stagger">
+            {projects.map((project: any, index: number) => (
+              <article className="bazil-photo-card" key={project.id} data-reveal="media">
+                <Link href={`/portfolio/${project.id}`} className="bazil-photo-link">
+                  <div className="bazil-photo-media">
+                    <img src={project.imageUrl || fallbackImages[index % fallbackImages.length]} alt={project.title} loading="eager" decoding="async" />
+                    <span className="bazil-photo-number">{String(index + 1).padStart(2, "0")}</span>
+                  </div>
+                  <div className="bazil-photo-info">
+                    <span className="eyebrow">{project.category}</span>
+                    <h3>{project.title}</h3>
+                    <p>{project.description}</p>
+                    <span className="bazil-photo-action">{locale === "ar" ? "استعرض القصة البصرية" : "View visual story"} <ArrowUpRight size={15} /></span>
+                  </div>
+                </Link>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="portfolio-note" data-reveal>
+        <div className="site-shell">
+          <span className="eyebrow eyebrow-light">{locale === "ar" ? "صنع بقصد" : "Built with intention"}</span>
+          <h2>{locale === "ar" ? <>التصميم الجيد يجعل<br /><em>الأفكار أسهل في التذكر.</em></> : <>Good design makes<br /><em>ideas easier to remember.</em></>}</h2>
+          <p>{locale === "ar" ? "كل مشروع يبدأ بسؤال، ثم يتحول إلى نظام بصري يعمل في العالم الحقيقي." : "Every project starts with a question, then becomes a visual system made to work in the real world."}</p>
+          <Link href="/contact" className="button button-light">{locale === "ar" ? "ابدأ مشروعاً" : "Start a project"}<ArrowUpRight size={17} /></Link>
+        </div>
+      </section>
     </div>
   </SiteChrome>;
 }
