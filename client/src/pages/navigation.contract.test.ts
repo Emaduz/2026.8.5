@@ -24,10 +24,8 @@ describe("public navigation and portfolio contracts", () => {
   it("uses the responsive grid project detail presentation contract", () => {
     const source = readFileSync(resolve(process.cwd(), "client/src/pages/ProjectDetail.tsx"), "utf8");
     const css = readFileSync(resolve(process.cwd(), "client/src/index.css"), "utf8");
-    expect(source).toContain("project-detail-grid-container");
-    expect(source).toContain("project-lightbox-overlay");
-    expect(css).toContain("project-detail-grid-container");
-    expect(css).toContain("project-lightbox-overlay");
+    expect(source).toContain("behance-story-container");
+    expect(css).toContain("behance-story-container");
   });
   it("keeps the requested eight projects available as card/detail data", () => {
     expect(fallbackProjects).toHaveLength(8);
