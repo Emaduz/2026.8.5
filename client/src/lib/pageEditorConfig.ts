@@ -53,7 +53,7 @@ export const DEFAULT_PAGE_EDITOR_SETTINGS: Record<PageEditorKey, PageEditorSetti
     subtitleEn: "Transforming ideas into impactful visual experiences with 9+ years of expertise.",
     subtitleAr: "تحويل الأفكار إلى تجارب بصرية مؤثرة بخبرة تتجاوز 9 سنوات.",
     heroImageUrl: "",
-    sectionOrder: ["hero", "story", "values", "cta"],
+    sectionOrder: ["hero", "story", "experience", "skills", "cta"],
     contentAlignment: "left",
     iconStyle: "bordered",
     spacingY: "normal",
@@ -68,7 +68,7 @@ export const DEFAULT_PAGE_EDITOR_SETTINGS: Record<PageEditorKey, PageEditorSetti
     subtitleEn: "From first sketch to final system, every detail has a reason to be there.",
     subtitleAr: "من الاسكتش الأول إلى النظام النهائي، كل تفصيلة وضعت لسبب مدروس.",
     heroImageUrl: "",
-    sectionOrder: ["hero", "detail", "process"],
+    sectionOrder: ["hero", "detail", "process", "cta"],
     contentAlignment: "left",
     iconStyle: "bordered",
     spacingY: "normal",
@@ -101,6 +101,10 @@ export const PAGE_EDITOR_META: Array<{ key: PageEditorKey; label: string; labelA
   { key: "services", label: "Services", labelAr: "الخدمات", description: "Manage services layout, pricing cards order, and button styles." },
   { key: "contact", label: "Contact", labelAr: "التواصل", description: "Manage contact form alignment, info cards order, and visual styling." },
 ];
+
+export function hasSavedPageEditorSettings(sections: any[] | undefined, page: PageEditorKey): boolean {
+  return Boolean(sections?.some(item => item.key === `page_editor_${page}`));
+}
 
 export function parsePageEditorSettings(sections: any[] | undefined, page: PageEditorKey): PageEditorSettings {
   const def = DEFAULT_PAGE_EDITOR_SETTINGS[page];

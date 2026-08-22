@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LayoutTemplate, Save, SlidersHorizontal, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,7 @@ export default function PageEditorView({ sections, onSave, saving }: Props) {
   const initialConfigs = useMemo(() => Object.fromEntries(PAGE_EDITOR_META.map(meta => [meta.key, parsePageEditorSettings(sections, meta.key)])) as Record<PageEditorKey, PageEditorSettings>, [sections]);
   const [configs, setConfigs] = useState<Record<PageEditorKey, PageEditorSettings>>(initialConfigs);
   const [activePage, setActivePage] = useState<PageEditorKey>("home");
+  useEffect(() => { setConfigs(initialConfigs); }, [initialConfigs]);
   const current = configs[activePage] || DEFAULT_PAGE_EDITOR_SETTINGS[activePage];
   const update = (patch: Partial<PageEditorSettings>) => setConfigs(previous => ({ ...previous, [activePage]: { ...current, ...patch } }));
 

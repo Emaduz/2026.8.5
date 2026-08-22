@@ -1,10 +1,12 @@
 import { Link } from "wouter";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { ArrowUpRight, Check, Globe2, Layers3, MessageCircle, Palette, PenTool, Printer, Send, Sparkles } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import SiteChrome from "@/components/SiteChrome";
 import { useLocale } from "@/contexts/LocaleContext";
 import { siteCopy } from "@/lib/siteCopy";
+import PageEditorSurface, { getPageEditorSectionStyle } from "@/components/PageEditorSurface";
+import { hasSavedPageEditorSettings, parsePageEditorSettings } from "@/lib/pageEditorConfig";
 
 function parseJson(value: unknown) {
   try {
@@ -169,15 +171,19 @@ export default function Services() {
   const pageCopy = { ...fallbackCopy, ...localizeObject(managedServicesCopy, locale) };
   const phone = locale === "ar" ? contactSection?.subtitleAr || contactSection?.subtitleEn || contactSection?.subtitle || "+966 504487308" : contactSection?.subtitleEn || contactSection?.subtitle || "+966 504487308";
   const whatsappHref = `https://wa.me/${String(phone).replace(/\D/g, "")}`;
+  const pageSettings = parsePageEditorSettings(data?.sections, "services");
+  const hasPageEditor = hasSavedPageEditorSettings(data?.sections, "services");
+  const editorTitle = hasPageEditor ? (locale === "ar" ? pageSettings.titleAr : pageSettings.titleEn) : "";
+  const editorSubtitle = hasPageEditor ? (locale === "ar" ? pageSettings.subtitleAr : pageSettings.subtitleEn) : "";
 
-  return <SiteChrome><div className="inner-page services-reference-page">
-    <section className="services-reference-hero site-shell" data-reveal="hero">
+  return <SiteChrome><PageEditorSurface page="services" sections={data?.sections}><div className="inner-page services-reference-page">
+    <section className="services-reference-hero site-shell" data-reveal="hero" style={getPageEditorSectionStyle(pageSettings, "hero")} >
       <span className="eyebrow"><span className="eyebrow-line" /> {pageCopy.eyebrow || copy.services.eyebrow}</span>
-      <h1>{pageCopy.title}<br /><em>{pageCopy.accent}</em></h1>
-      <p>{pageCopy.intro}</p>
+      <h1>{editorTitle || <>{pageCopy.title}<br /><em>{pageCopy.accent}</em></>}</h1>
+      <p>{editorSubtitle || pageCopy.intro}</p>{hasPageEditor && pageSettings.heroImageUrl ? <div className="page-editor-hero-visual"><img className="page-editor-hero-image" src={pageSettings.heroImageUrl} alt={editorTitle || pageCopy.title} /></div> : null}
     </section>
 
-    <section className="services-reference-offer site-shell" data-reveal>
+    <section className="services-reference-offer site-shell" data-reveal style={getPageEditorSectionStyle(pageSettings, "detail")} >
       <div className="services-reference-grid" data-reveal="stagger">
         {services.map((service: any, index: number) => {
           const Icon = iconFor(index);
@@ -203,7 +209,7 @@ export default function Services() {
       </div>
     </section>
 
-    <section className="services-reference-process" data-reveal>
+    <section className="services-reference-process" data-reveal style={getPageEditorSectionStyle(pageSettings, "process")} >
       <div className="site-shell">
         <div className="services-reference-section-heading"><div><span className="eyebrow eyebrow-light">{pageCopy.processEyebrow}</span><h2>{pageCopy.processTitle}<br /><em>{pageCopy.processAccent}</em></h2></div><p>{pageCopy.processDescription}</p></div>
         <div className="services-reference-process-grid" data-reveal="stagger">
@@ -212,12 +218,12 @@ export default function Services() {
       </div>
     </section>
 
-    <section className="services-reference-cta" data-reveal>
+    <section className="services-reference-cta" data-reveal style={getPageEditorSectionStyle(pageSettings, "cta")} >
       <div className="services-reference-cta-shell site-shell">
         <div className="services-reference-cta-watermark" aria-hidden="true">NEXT</div>
         <div className="services-reference-cta-copy"><span className="services-reference-cta-kicker"><span className="services-reference-cta-dot" />{locale === "ar" ? "خطوتك التالية" : "Your next step"}</span><h2>{pageCopy.readyTitle}</h2><p>{pageCopy.readyDescription}</p></div>
         <div className="services-reference-cta-action"><span>{locale === "ar" ? "لنصنع شيئاً واضحاً ومؤثراً" : "Let’s make something clear and meaningful"}</span><a className="services-reference-cta-button" href={whatsappHref} target="_blank" rel="noreferrer"><MessageCircle size={17} />{pageCopy.readyButton}<ArrowUpRight size={17} /></a></div>
       </div>
     </section>
-  </div></SiteChrome>;
+  </div></PageEditorSurface></SiteChrome>;
 }

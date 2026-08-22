@@ -1,9 +1,12 @@
 import { type FormEvent, useMemo, useState } from "react";
+import React from "react";
 import { ArrowUpRight, CheckCircle2, Clock3, Instagram, Linkedin, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import SiteChrome from "@/components/SiteChrome";
 import BehanceMark from "@/components/BehanceMark";
 import { useLocale } from "@/contexts/LocaleContext";
+import PageEditorSurface, { getPageEditorSectionStyle } from "@/components/PageEditorSurface";
+import { hasSavedPageEditorSettings, parsePageEditorSettings } from "@/lib/pageEditorConfig";
 
 function section(data: any, key: string) { return data?.sections?.find((item: any) => item.key === key); }
 function parseLinks(content?: string) { try { return content ? JSON.parse(content) : {}; } catch { return {}; } }
@@ -78,6 +81,10 @@ export default function Contact() {
   const whatsappHref = `https://wa.me/${phone.replace(/\D/g, "")}`;
   const social = useMemo(() => ({ instagram: links.instagram || "https://instagram.com/emadalddine", linkedin: links.linkedin || "https://linkedin.com/in/emadalddine", behance: links.behance || "https://behance.net/emadalddine" }), [links.instagram, links.linkedin, links.behance]);
   const [sent, setSent] = useState(false);
+  const pageSettings = parsePageEditorSettings(data?.sections, "contact");
+  const hasPageEditor = hasSavedPageEditorSettings(data?.sections, "contact");
+  const editorTitle = hasPageEditor ? (locale === "ar" ? pageSettings.titleAr : pageSettings.titleEn) : "";
+  const editorSubtitle = hasPageEditor ? (locale === "ar" ? pageSettings.subtitleAr : pageSettings.subtitleEn) : "";
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -91,14 +98,15 @@ export default function Contact() {
     setSent(true);
   };
 
-  return <SiteChrome><div className="inner-page contact-reference-page">
-    <section className="contact-reference-hero site-shell" data-reveal="hero">
+  return <SiteChrome><PageEditorSurface page="contact" sections={data?.sections}><div className="inner-page contact-reference-page">
+    <section className="contact-reference-hero site-shell" data-reveal="hero" style={getPageEditorSectionStyle(pageSettings, "hero")}>
       <span className="eyebrow"><span className="eyebrow-line" />{copy.eyebrow}</span>
-      <h1>{copy.title}</h1>
-      <p>{locale === "ar" ? "أخبرني بفكرتك وسنحوّلها إلى تجربة بصرية واضحة ومؤثرة." : "Tell me about your idea and let’s turn it into a clear, meaningful visual experience."}</p>
+      <h1>{editorTitle || copy.title}</h1>
+      <p>{editorSubtitle || (locale === "ar" ? "أخبرني بفكرتك وسنحوّلها إلى تجربة بصرية واضحة ومؤثرة." : "Tell me about your idea and let’s turn it into a clear, meaningful visual experience.")}</p>
+      {hasPageEditor && pageSettings.heroImageUrl ? <div className="page-editor-hero-visual"><img className="page-editor-hero-image" src={pageSettings.heroImageUrl} alt={editorTitle || copy.title} /></div> : null}
     </section>
 
-    <section className="contact-reference-main site-shell" data-reveal>
+    <section className="contact-reference-main site-shell" data-reveal style={getPageEditorSectionStyle(pageSettings, "detail")} >
       <div className="contact-reference-form-card">
         <div className="contact-reference-card-heading"><span className="contact-reference-number">01</span><h2>{copy.formTitle}</h2></div>
         <form className="contact-reference-form" onSubmit={handleSubmit}>
@@ -131,13 +139,13 @@ export default function Contact() {
       </aside>
     </section>
 
-    <section className="contact-reference-social site-shell" data-reveal>
+    <section className="contact-reference-social site-shell" data-reveal style={getPageEditorSectionStyle(pageSettings, "social")} >
       <div><span className="eyebrow">03</span><h2>{copy.follow}</h2></div>
       <div className="contact-reference-social-grid" data-reveal="stagger"><a href={social.instagram} target="_blank" rel="noreferrer"><Instagram size={18} /><span>Instagram</span><ArrowUpRight size={16} /></a><a href={social.linkedin} target="_blank" rel="noreferrer"><Linkedin size={18} /><span>LinkedIn</span><ArrowUpRight size={16} /></a><a href={social.behance} target="_blank" rel="noreferrer"><BehanceMark size={18} /><span>Behance</span><ArrowUpRight size={16} /></a></div>
     </section>
 
-    <section className="contact-reference-faq" data-reveal>
+    <section className="contact-reference-faq" data-reveal style={getPageEditorSectionStyle(pageSettings, "faq")} >
       <div className="site-shell"><div className="contact-reference-faq-heading"><span className="eyebrow eyebrow-light">04</span><h2>{copy.faqTitle}</h2></div><div className="contact-reference-faq-list">{copy.faqs.map(([question, answer], index) => <details key={question} open={index === 0}><summary><span>{question}</span><span>+</span></summary><p>{answer}</p></details>)}</div></div>
     </section>
-  </div></SiteChrome>;
+  </div></PageEditorSurface></SiteChrome>;
 }

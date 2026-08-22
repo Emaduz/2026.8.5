@@ -2105,3 +2105,182 @@ html, body { font-family: "Rubik"; }
     margin-bottom: 1.5rem !important;
   }
 }
+
+/* Public application of Page Editor settings */
+.page-editor-surface > .home-page,
+.page-editor-surface > .inner-page {
+  display: flex;
+  flex-direction: column;
+}
+.page-editor-surface > .home-page > section,
+.page-editor-surface > .inner-page > section {
+  order: var(--page-section-order, 0);
+}
+.page-editor-surface .button-primary,
+.page-editor-surface .button-light,
+.page-editor-surface .services-reference-cta-button {
+  background: var(--page-editor-button-light-bg) !important;
+  color: var(--page-editor-button-light-text) !important;
+  border-color: var(--page-editor-button-light-bg) !important;
+}
+.dark .page-editor-surface .button-primary,
+.dark .page-editor-surface .button-light,
+.dark .page-editor-surface .services-reference-cta-button {
+  background: var(--page-editor-button-dark-bg) !important;
+  color: var(--page-editor-button-dark-text) !important;
+  border-color: var(--page-editor-button-dark-bg) !important;
+}
+.page-editor-surface .button-outline,
+.page-editor-surface .button-ghost {
+  color: var(--page-editor-button-light-bg) !important;
+  border-color: color-mix(in srgb, var(--page-editor-button-light-bg) 35%, transparent) !important;
+}
+.dark .page-editor-surface .button-outline,
+.dark .page-editor-surface .button-ghost {
+  color: var(--page-editor-button-dark-bg) !important;
+  border-color: color-mix(in srgb, var(--page-editor-button-dark-bg) 35%, transparent) !important;
+}
+.page-editor-hero-image {
+  display: block;
+  width: min(100%, 520px);
+  max-height: 360px;
+  object-fit: cover;
+  border-radius: 22px;
+  border: 1px solid rgba(143,24,25,.16);
+  box-shadow: 0 18px 45px rgba(80,45,20,.12);
+}
+.page-editor-hero-visual {
+  display: grid;
+  place-items: center;
+  margin-top: 24px;
+}
+.page-editor-align-center .hero-ethan-copy,
+.page-editor-align-center .about-copy,
+.page-editor-align-center .bazil-hero-content,
+.page-editor-align-center .services-reference-hero,
+.page-editor-align-center .contact-reference-hero {
+  text-align: center;
+  justify-items: center;
+}
+.page-editor-align-right .hero-ethan-copy,
+.page-editor-align-right .about-copy,
+.page-editor-align-right .bazil-hero-content,
+.page-editor-align-right .services-reference-hero,
+.page-editor-align-right .contact-reference-hero {
+  text-align: right;
+  justify-items: end;
+}
+.page-editor-align-center .hero-ethan-info p,
+.page-editor-align-center .about-copy p,
+.page-editor-align-center .services-reference-hero p,
+.page-editor-align-center .contact-reference-hero p,
+.page-editor-align-right .hero-ethan-info p,
+.page-editor-align-right .about-copy p,
+.page-editor-align-right .services-reference-hero p,
+.page-editor-align-right .contact-reference-hero p {
+  margin-left: auto;
+  margin-right: auto;
+}
+.page-editor-icons-minimal .service-icon,
+.page-editor-icons-minimal .services-reference-card-icon,
+.page-editor-icons-minimal .services-reference-process-icon,
+.page-editor-icons-minimal .about-reference-icon,
+.page-editor-icons-minimal .contact-reference-icon {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.page-editor-icons-solid .service-icon,
+.page-editor-icons-solid .services-reference-card-icon,
+.page-editor-icons-solid .services-reference-process-icon,
+.page-editor-icons-solid .about-reference-icon,
+.page-editor-icons-solid .contact-reference-icon {
+  color: #fffaf4 !important;
+  background: #8f1819 !important;
+  border-color: #8f1819 !important;
+}
+.page-editor-icons-bordered .service-icon,
+.page-editor-icons-bordered .services-reference-card-icon,
+.page-editor-icons-bordered .services-reference-process-icon,
+.page-editor-icons-bordered .about-reference-icon,
+.page-editor-icons-bordered .contact-reference-icon {
+  border-style: solid !important;
+}
+.page-editor-spacing-compact > .home-page > section,
+.page-editor-spacing-compact > .inner-page > section { margin-block-end: 0 !important; }
+.page-editor-spacing-compact .section-block { padding-top: 42px; padding-bottom: 42px; }
+.page-editor-spacing-compact .about-section { padding-top: 52px; padding-bottom: 52px; }
+.page-editor-spacing-compact .bazil-gallery-section,
+.page-editor-spacing-compact .about-reference-layout,
+.page-editor-spacing-compact .services-reference-offer,
+.page-editor-spacing-compact .contact-reference-main { padding-top: 28px; padding-bottom: 36px; }
+.page-editor-spacing-spacious .section-block { padding-top: 112px; padding-bottom: 112px; }
+.page-editor-spacing-spacious .about-section { padding-top: 120px; padding-bottom: 120px; }
+.page-editor-spacing-spacious .bazil-gallery-section,
+.page-editor-spacing-spacious .about-reference-layout,
+.page-editor-spacing-spacious .services-reference-offer,
+.page-editor-spacing-spacious .contact-reference-main { padding-top: 92px; padding-bottom: 104px; }
+.page-editor-home .hero-ethan-visual:has(.page-editor-hero-image) .portrait-composition { display: none; }
+.page-editor-home .hero-ethan-visual .page-editor-hero-image { width: min(570px, 100%); max-height: 520px; border-radius: 50%; aspect-ratio: 1; }
+.page-editor-portfolio .bazil-hero:has(.page-editor-hero-visual),
+.page-editor-about .about-reference-intro:has(.page-editor-hero-visual),
+.page-editor-services .services-reference-hero:has(.page-editor-hero-visual),
+.page-editor-contact .contact-reference-hero:has(.page-editor-hero-visual) { position: relative; }
+.page-editor-portfolio .page-editor-hero-visual,
+.page-editor-about .page-editor-hero-visual,
+.page-editor-services .page-editor-hero-visual,
+.page-editor-contact .page-editor-hero-visual { width: min(360px, 100%); }
+@media (min-width: 769px) {
+  .page-editor-portfolio .bazil-hero:has(.page-editor-hero-visual),
+  .page-editor-about .about-reference-intro:has(.page-editor-hero-visual),
+  .page-editor-services .services-reference-hero:has(.page-editor-hero-visual),
+  .page-editor-contact .contact-reference-hero:has(.page-editor-hero-visual) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 360px);
+    align-items: center;
+    gap: 36px;
+    text-align: left;
+  }
+}
+@media (max-width: 768px) {
+  .page-editor-hero-image { max-height: 280px; }
+  .page-editor-home .hero-ethan-visual .page-editor-hero-image { width: min(300px, 100%); }
+}
+
+.page-editor-align-center .about-reference-intro,
+.page-editor-align-center .about-reference-main,
+.page-editor-align-center .about-reference-contact,
+.page-editor-align-center .bazil-hero-content,
+.page-editor-align-center .services-reference-hero,
+.page-editor-align-center .contact-reference-hero { text-align: center; }
+.page-editor-align-right .about-reference-intro,
+.page-editor-align-right .about-reference-main,
+.page-editor-align-right .about-reference-contact,
+.page-editor-align-right .bazil-hero-content,
+.page-editor-align-right .services-reference-hero,
+.page-editor-align-right .contact-reference-hero { text-align: right; }
+.page-editor-align-center .about-reference-main,
+.page-editor-align-center .about-reference-card,
+.page-editor-align-center .about-reference-sidebar,
+.page-editor-align-center .contact-reference-main,
+.page-editor-align-center .contact-reference-sidebar,
+.page-editor-align-center .services-reference-grid,
+.page-editor-align-center .services-reference-process-grid,
+.page-editor-align-center .bazil-photos-grid { justify-items: center; }
+.page-editor-align-right .about-reference-main,
+.page-editor-align-right .about-reference-card,
+.page-editor-align-right .about-reference-sidebar,
+.page-editor-align-right .contact-reference-main,
+.page-editor-align-right .contact-reference-sidebar,
+.page-editor-align-right .services-reference-grid,
+.page-editor-align-right .services-reference-process-grid,
+.page-editor-align-right .bazil-photos-grid { justify-items: end; }
+.page-editor-align-center .section-heading,
+.page-editor-align-right .section-heading { text-align: center; }
+.page-editor-align-right .section-heading { text-align: right; }
+
+.about-reference-main { display: flex; flex-direction: column; }
+.about-reference-main-sections { display: flex; flex-direction: column; gap: 24px; }
+.about-reference-main-sections > section { order: var(--page-section-order, 0); }
+.services-reference-page { display: flex; flex-direction: column; }
+.services-reference-page > section { order: var(--page-section-order, 0); }

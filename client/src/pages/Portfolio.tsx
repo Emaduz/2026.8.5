@@ -5,6 +5,8 @@ import SiteChrome from "@/components/SiteChrome";
 import { trpc } from "@/lib/trpc";
 import { useLocale } from "@/contexts/LocaleContext";
 import { localizeProject, siteCopy } from "@/lib/siteCopy";
+import PageEditorSurface, { getPageEditorSectionStyle } from "@/components/PageEditorSurface";
+import { hasSavedPageEditorSettings, parsePageEditorSettings } from "@/lib/pageEditorConfig";
 
 const fallbackImages = [
   "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800",
@@ -34,14 +36,20 @@ export default function Portfolio() {
   const { data, isLoading } = trpc.content.publicHome.useQuery();
   const rawProjects = data?.projects?.length ? [...data.projects].sort((a: any, b: any) => a.displayOrder - b.displayOrder) : fallbackProjects;
   const projects = rawProjects.map(project => localizeProject(project, locale));
+  const pageSettings = parsePageEditorSettings(data?.sections, "portfolio");
+  const hasPageEditor = hasSavedPageEditorSettings(data?.sections, "portfolio");
+  const editorTitle = hasPageEditor ? (locale === "ar" ? pageSettings.titleAr : pageSettings.titleEn) : "";
+  const editorSubtitle = hasPageEditor ? (locale === "ar" ? pageSettings.subtitleAr : pageSettings.subtitleEn) : "";
+  const defaultTitle = locale === "ar" ? "أعمال وجهة نظر." : "Projects with a point of view.";
+  const defaultSubtitle = locale === "ar" ? "استعرض مجموعة مختارة من مشاريع الهوية والشعارات والتصميم الطباعي المصممة بوضوح وأثر طويل." : "Explore a curated selection of identity, logo, and print work crafted for clarity and lasting recognition.";
 
   return <SiteChrome>
-    <div className="inner-page portfolio-page bazil-photos-layout">
-      <section className="bazil-hero site-shell" data-reveal="hero">
+    <PageEditorSurface page="portfolio" sections={data?.sections}><div className="inner-page portfolio-page bazil-photos-layout">
+      <section className="bazil-hero site-shell" data-reveal="hero" style={getPageEditorSectionStyle(pageSettings, "hero")} >
         <div className="bazil-hero-content">
           <span className="eyebrow"><span className="eyebrow-line" /> {copy.home.selected}</span>
-          <h1>{locale === "ar" ? "أعمال وجهة نظر." : "Projects with a point of view."}</h1>
-          <p>{locale === "ar" ? "استعرض مجموعة مختارة من مشاريع الهوية والشعارات والتصميم الطباعي المصممة بوضوح وأثر طويل." : "Explore a curated selection of identity, logo, and print work crafted for clarity and lasting recognition."}</p>
+          <h1>{editorTitle || defaultTitle}</h1>
+          <p>{editorSubtitle || defaultSubtitle}</p>{hasPageEditor && pageSettings.heroImageUrl ? <div className="page-editor-hero-visual"><img className="page-editor-hero-image" src={pageSettings.heroImageUrl} alt={editorTitle || defaultTitle} /></div> : null}
         </div>
         <div className="bazil-hero-ornament">
           <span className="bazil-ornament-line" />
@@ -49,7 +57,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      <section className="bazil-gallery-section site-shell" data-reveal>
+      <section className="bazil-gallery-section site-shell" data-reveal style={getPageEditorSectionStyle(pageSettings, "grid")} >
         {isLoading ? (
           <div className="loading-line">{locale === "ar" ? "جاري تحميل الأعمال..." : "Loading the latest work..."}</div>
         ) : (
@@ -74,7 +82,7 @@ export default function Portfolio() {
         )}
       </section>
 
-      <section className="portfolio-note" data-reveal>
+      <section className="portfolio-note" data-reveal style={getPageEditorSectionStyle(pageSettings, "note")} >
         <div className="site-shell">
           <span className="eyebrow eyebrow-light">{locale === "ar" ? "صنع بقصد" : "Built with intention"}</span>
           <h2>{locale === "ar" ? <>التصميم الجيد يجعل<br /><em>الأفكار أسهل في التذكر.</em></> : <>Good design makes<br /><em>ideas easier to remember.</em></>}</h2>
@@ -82,6 +90,6 @@ export default function Portfolio() {
           <Link href="/contact" className="button button-light">{locale === "ar" ? "ابدأ مشروعاً" : "Start a project"}<ArrowUpRight size={17} /></Link>
         </div>
       </section>
-    </div>
+    </div></PageEditorSurface>
   </SiteChrome>;
 }
