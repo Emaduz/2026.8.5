@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { LayoutTemplate, Save, SlidersHorizontal, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,11 @@ type Props = {
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return <label className="block space-y-1.5"><span className="flex items-center justify-between gap-3 text-xs font-semibold text-[#8f1819]"><span>{label}</span>{hint ? <small className="font-normal text-[#bd7b6a]">{hint}</small> : null}</span>{children}</label>;
+}
+
+function ColorField({ label, value, fallback, onChange }: { label: string; value?: string; fallback: string; onChange: (value: string) => void }) {
+  const pickerValue = value && /^#[0-9a-f]{6}$/i.test(value) ? value : fallback;
+  return <Field label={label}><div className="flex gap-2"><Input type="color" value={pickerValue} onChange={event => onChange(event.target.value)} className="h-10 w-14 cursor-pointer p-1" /><Input value={value || ""} onChange={event => onChange(event.target.value)} placeholder={fallback} /></div></Field>;
 }
 
 function UploadField({ value, onChange }: { value: string; onChange: (url: string) => void }) {
@@ -71,6 +76,26 @@ export default function PageEditorView({ sections, onSave, saving }: Props) {
           <Field label="Dark Mode Text"><div className="flex gap-2"><Input type="color" value={current.buttonDarkText} onChange={event => update({ buttonDarkText: event.target.value })} className="h-10 w-14 cursor-pointer p-1" /><Input value={current.buttonDarkText} onChange={event => update({ buttonDarkText: event.target.value })} /></div></Field>
         </div>
       </div>
+      {activePage === "services" ? <div className="rounded-xl border border-[#eadccd] bg-white p-4 space-y-4">
+        <div><p className="text-xs font-semibold uppercase tracking-wider text-[#8f1819]">Services Grid Styling (تحكم شبكة الخدمات)</p><p className="mt-1 text-xs leading-5 text-[#9c7860]">Customize the services-reference-grid on Home and Services. Use HEX colors or rgba(...) for transparency.</p></div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <ColorField label="Grid Background Light (خلفية الشبكة - فاتح)" value={current.gridBgLight} fallback="#d9cab1" onChange={value => update({ gridBgLight: value })} />
+          <ColorField label="Grid Background Dark (خلفية الشبكة - داكن)" value={current.gridBgDark} fallback="#2d2d2d" onChange={value => update({ gridBgDark: value })} />
+          <ColorField label="Card Background Light (خلفية البطاقات - فاتح)" value={current.gridCardBgLight} fallback="#fffaf4" onChange={value => update({ gridCardBgLight: value })} />
+          <ColorField label="Card Background Dark (خلفية البطاقات - داكن)" value={current.gridCardBgDark} fallback="#1e1e1e" onChange={value => update({ gridCardBgDark: value })} />
+          <ColorField label="Title Light (عناوين البطاقات - فاتح)" value={current.gridTitleColorLight} fallback="#8f1819" onChange={value => update({ gridTitleColorLight: value })} />
+          <ColorField label="Title Dark (عناوين البطاقات - داكن)" value={current.gridTitleColorDark} fallback="#f3d9cb" onChange={value => update({ gridTitleColorDark: value })} />
+          <ColorField label="Text Light (النصوص - فاتح)" value={current.gridTextColorLight} fallback="#9c7860" onChange={value => update({ gridTextColorLight: value })} />
+          <ColorField label="Text Dark (النصوص - داكن)" value={current.gridTextColorDark} fallback="#f7eee5" onChange={value => update({ gridTextColorDark: value })} />
+          <ColorField label="Icon Light (الأيقونات - فاتح)" value={current.gridIconColorLight} fallback="#8f1819" onChange={value => update({ gridIconColorLight: value })} />
+          <ColorField label="Icon Dark (الأيقونات - داكن)" value={current.gridIconColorDark} fallback="#f3d9cb" onChange={value => update({ gridIconColorDark: value })} />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Field label="Card Border (حدود البطاقات)"><Input value={current.gridCardBorder || ""} onChange={event => update({ gridCardBorder: event.target.value })} placeholder="3px solid #8f1819" /></Field>
+          <Field label="Card Radius (زوايا البطاقات)"><Input value={current.gridCardRadius || "1rem"} onChange={event => update({ gridCardRadius: event.target.value })} placeholder="0 0 13px 13px" /></Field>
+          <Field label="Card Opacity (شفافية البطاقات)"><Input value={current.gridCardOpacity || "1"} onChange={event => update({ gridCardOpacity: event.target.value })} placeholder="0.85 - 1" /></Field>
+        </div>
+      </div> : null}
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#eadccd] pt-4"><p className="text-xs leading-5 text-[#9c7860]">Stored securely under <code className="rounded bg-[#f3e8dc] px-1.5 py-0.5 text-[#8f1819]">page_editor_{activePage}</code>.</p><Button type="button" disabled={saving} onClick={() => { const content = JSON.stringify(current); onSave({ key: `page_editor_${activePage}`, content, contentEn: content, contentAr: content }); }} className="bg-[#8f1819] text-white hover:bg-[#701314]"><Save size={16} />{saving ? "Saving…" : `Save ${PAGE_EDITOR_META.find(meta => meta.key === activePage)?.label} settings`}</Button></div>
     </CardContent></Card>
   </div>;

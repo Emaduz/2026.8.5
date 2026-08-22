@@ -14,6 +14,19 @@ export type PageEditorSettings = {
   buttonLightText: string;
   buttonDarkBg: string;
   buttonDarkText: string;
+  gridBgLight?: string;
+  gridBgDark?: string;
+  gridCardBgLight?: string;
+  gridCardBgDark?: string;
+  gridCardBorder?: string;
+  gridCardRadius?: string;
+  gridCardOpacity?: string;
+  gridTitleColorLight?: string;
+  gridTitleColorDark?: string;
+  gridTextColorLight?: string;
+  gridTextColorDark?: string;
+  gridIconColorLight?: string;
+  gridIconColorDark?: string;
 };
 
 export const DEFAULT_PAGE_EDITOR_SETTINGS: Record<PageEditorKey, PageEditorSettings> = {
@@ -31,6 +44,13 @@ export const DEFAULT_PAGE_EDITOR_SETTINGS: Record<PageEditorKey, PageEditorSetti
     buttonLightText: "#ffffff",
     buttonDarkBg: "#ffffff",
     buttonDarkText: "#1a1a1a",
+    gridCardBgLight: "",
+    gridCardBgDark: "",
+    gridCardBorder: "",
+    gridCardRadius: "1rem",
+    gridCardOpacity: "1",
+    gridTextColorLight: "",
+    gridTextColorDark: "",
   },
   portfolio: {
     titleEn: "Projects with a point of view.",
@@ -46,6 +66,13 @@ export const DEFAULT_PAGE_EDITOR_SETTINGS: Record<PageEditorKey, PageEditorSetti
     buttonLightText: "#ffffff",
     buttonDarkBg: "#ffffff",
     buttonDarkText: "#1a1a1a",
+    gridCardBgLight: "",
+    gridCardBgDark: "",
+    gridCardBorder: "",
+    gridCardRadius: "1rem",
+    gridCardOpacity: "1",
+    gridTextColorLight: "",
+    gridTextColorDark: "",
   },
   about: {
     titleEn: "Design with a point of view.",
@@ -61,6 +88,13 @@ export const DEFAULT_PAGE_EDITOR_SETTINGS: Record<PageEditorKey, PageEditorSetti
     buttonLightText: "#ffffff",
     buttonDarkBg: "#ffffff",
     buttonDarkText: "#1a1a1a",
+    gridCardBgLight: "",
+    gridCardBgDark: "",
+    gridCardBorder: "",
+    gridCardRadius: "1rem",
+    gridCardOpacity: "1",
+    gridTextColorLight: "",
+    gridTextColorDark: "",
   },
   services: {
     titleEn: "Crafted for clarity.",
@@ -76,6 +110,19 @@ export const DEFAULT_PAGE_EDITOR_SETTINGS: Record<PageEditorKey, PageEditorSetti
     buttonLightText: "#ffffff",
     buttonDarkBg: "#ffffff",
     buttonDarkText: "#1a1a1a",
+    gridBgLight: "",
+    gridBgDark: "",
+    gridCardBgLight: "",
+    gridCardBgDark: "",
+    gridCardBorder: "",
+    gridCardRadius: "0 0 13px 13px",
+    gridCardOpacity: "1",
+    gridTitleColorLight: "#8f1819",
+    gridTitleColorDark: "#f3d9cb",
+    gridTextColorLight: "#9c7860",
+    gridTextColorDark: "#f7eee5",
+    gridIconColorLight: "#8f1819",
+    gridIconColorDark: "#f3d9cb",
   },
   contact: {
     titleEn: "Let’s create something remarkable.",
@@ -91,6 +138,13 @@ export const DEFAULT_PAGE_EDITOR_SETTINGS: Record<PageEditorKey, PageEditorSetti
     buttonLightText: "#ffffff",
     buttonDarkBg: "#ffffff",
     buttonDarkText: "#1a1a1a",
+    gridCardBgLight: "",
+    gridCardBgDark: "",
+    gridCardBorder: "",
+    gridCardRadius: "1rem",
+    gridCardOpacity: "1",
+    gridTextColorLight: "",
+    gridTextColorDark: "",
   },
 };
 
@@ -98,7 +152,7 @@ export const PAGE_EDITOR_META: Array<{ key: PageEditorKey; label: string; labelA
   { key: "home", label: "Home", labelAr: "الرئيسية", description: "Comprehensive layout, icon styles, section reordering, and bilingual content." },
   { key: "portfolio", label: "Portfolio", labelAr: "الأعمال", description: "Manage portfolio layout, grid items order, and alignment." },
   { key: "about", label: "About", labelAr: "نبذة عني", description: "Manage about sections, bio alignment, and icon themes." },
-  { key: "services", label: "Services", labelAr: "الخدمات", description: "Manage services layout, pricing cards order, and button styles." },
+  { key: "services", label: "Services", labelAr: "الخدمات", description: "Manage services layout, grid styling, pricing cards order, and button styles." },
   { key: "contact", label: "Contact", labelAr: "التواصل", description: "Manage contact form alignment, info cards order, and visual styling." },
 ];
 

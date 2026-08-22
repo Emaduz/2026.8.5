@@ -2284,3 +2284,73 @@ html, body { font-family: "Rubik"; }
 .about-reference-main-sections > section { order: var(--page-section-order, 0); }
 .services-reference-page { display: flex; flex-direction: column; }
 .services-reference-page > section { order: var(--page-section-order, 0); }
+
+/* Services Grid custom styling from Page Editor */
+.page-editor-surface .services-reference-grid,
+.page-editor-surface .services-marquee-shell {
+  background-color: var(--page-editor-grid-bg-light, transparent);
+  border-radius: var(--page-editor-grid-card-radius, 1rem);
+}
+.page-editor-surface .services-reference-card,
+.page-editor-surface .service-marquee-card {
+  background-color: var(--page-editor-grid-card-bg-light, #fffaf4);
+  border: var(--page-editor-grid-card-border, 1px solid rgba(143,24,25,.15));
+  border-radius: var(--page-editor-grid-card-radius, 1rem);
+  opacity: var(--page-editor-grid-card-opacity, 1);
+}
+.page-editor-surface .services-reference-card h2,
+.page-editor-surface .service-marquee-card h3 {
+  color: var(--page-editor-grid-title-light, #8f1819);
+}
+.page-editor-surface .services-reference-card > p,
+.page-editor-surface .services-reference-card li,
+.page-editor-surface .services-reference-card-footer,
+.page-editor-surface .services-reference-card-footer small,
+.page-editor-surface .service-marquee-card p,
+.page-editor-surface .service-marquee-card-top > span,
+.page-editor-surface .services-marquee-footer {
+  color: var(--page-editor-grid-text-light, #9c7860);
+}
+.page-editor-surface .services-reference-card-footer strong {
+  color: var(--page-editor-grid-title-light, #8f1819);
+}
+.page-editor-surface .service-marquee-rule {
+  background: var(--page-editor-grid-text-light, #bd7b6a);
+}
+.page-editor-surface .services-reference-card-icon,
+.page-editor-surface .services-reference-card li svg,
+.page-editor-surface .service-marquee-card-top .service-icon {
+  color: var(--page-editor-grid-icon-light, #8f1819);
+}
+.dark .page-editor-surface .services-reference-grid,
+.dark .page-editor-surface .services-marquee-shell {
+  background-color: var(--page-editor-grid-bg-dark, transparent);
+}
+.dark .page-editor-surface .services-reference-card,
+.dark .page-editor-surface .service-marquee-card {
+  background-color: var(--page-editor-grid-card-bg-dark, #1e1e1e);
+}
+.dark .page-editor-surface .services-reference-card h2,
+.dark .page-editor-surface .service-marquee-card h3 {
+  color: var(--page-editor-grid-title-dark, #f3d9cb);
+}
+.dark .page-editor-surface .services-reference-card > p,
+.dark .page-editor-surface .services-reference-card li,
+.dark .page-editor-surface .services-reference-card-footer,
+.dark .page-editor-surface .services-reference-card-footer small,
+.dark .page-editor-surface .service-marquee-card p,
+.dark .page-editor-surface .service-marquee-card-top > span,
+.dark .page-editor-surface .services-marquee-footer {
+  color: var(--page-editor-grid-text-dark, #f7eee5);
+}
+.dark .page-editor-surface .services-reference-card-footer strong {
+  color: var(--page-editor-grid-title-dark, #f3d9cb);
+}
+.dark .page-editor-surface .service-marquee-rule {
+  background: var(--page-editor-grid-text-dark, #f7eee5);
+}
+.dark .page-editor-surface .services-reference-card-icon,
+.dark .page-editor-surface .services-reference-card li svg,
+.dark .page-editor-surface .service-marquee-card-top .service-icon {
+  color: var(--page-editor-grid-icon-dark, #f3d9cb);
+}

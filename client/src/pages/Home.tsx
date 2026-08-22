@@ -95,8 +95,9 @@ export default function Home() {
   const hasPageEditor = hasSavedPageEditorSettings(data?.sections, "home");
   const editorTitle = hasPageEditor ? (locale === "ar" ? pageSettings.titleAr : pageSettings.titleEn) : "";
   const editorSubtitle = hasPageEditor ? (locale === "ar" ? pageSettings.subtitleAr : pageSettings.subtitleEn) : "";
+  const servicesGridSettings = parsePageEditorSettings(data?.sections, "services");
 
-  return <SiteChrome><PageEditorSurface page="home" sections={data?.sections}><div className="home-page">
+  return <SiteChrome><PageEditorSurface page="home" sections={data?.sections} gridSettings={servicesGridSettings}><div className="home-page">
     <section className="hero-ethan site-shell" data-reveal="hero" style={getPageEditorSectionStyle(pageSettings, "hero")}>
       <div className="hero-ethan-main">
         <div className="hero-ethan-copy">

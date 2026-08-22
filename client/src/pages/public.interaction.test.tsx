@@ -28,11 +28,19 @@ describe("public navigation and interactions", () => {
   it("renders card-based portfolio output through the AppRouter", () => { appPath = "/portfolio"; render(<Shell><AppRouter /></Shell>); expect(screen.getByText("Projects with a point of view.")).toBeTruthy(); expect(screen.getAllByRole("link", { name: /View visual story/i }).length).toBeGreaterThan(0); });
   it("does not render the testimonials section on Home", () => { render(<Shell><Home /></Shell>); expect(document.querySelector(".testimonials-section")).toBeNull(); expect(screen.queryByText("What people say about my work.")).toBeNull(); expect(screen.queryByText("ما يقوله الناس عن أعمالي.")).toBeNull(); });
   it("applies saved Home Page Editor settings to the public DOM", () => {
-    mockHomeData.sections = [{ key: "page_editor_home", content: JSON.stringify({ titleEn: "Controlled hero title", subtitleEn: "Controlled hero subtitle", heroImageUrl: "home-hero.jpg", contentAlignment: "center", spacingY: "compact", iconStyle: "minimal", buttonLightBg: "#123456", buttonLightText: "#fedcba", sectionOrder: ["services", "hero", "featured", "about", "journal", "contact"] }) }];
+    mockHomeData.sections = [
+      { key: "page_editor_home", content: JSON.stringify({ titleEn: "Controlled hero title", subtitleEn: "Controlled hero subtitle", heroImageUrl: "home-hero.jpg", contentAlignment: "center", spacingY: "compact", iconStyle: "minimal", buttonLightBg: "#123456", buttonLightText: "#fedcba", sectionOrder: ["services", "hero", "featured", "about", "journal", "contact"] }) },
+      { key: "page_editor_services", content: JSON.stringify({ gridBgLight: "rgba(255,0,0,.12)", gridCardBgLight: "#123456", gridCardBorder: "2px solid #abcdef", gridCardRadius: "22px", gridCardOpacity: "0.82", gridTitleColorLight: "#112233", gridTextColorLight: "#445566", gridIconColorLight: "#778899" }) },
+    ];
     render(<Shell><Home /></Shell>);
     expect(screen.getByRole("heading", { name: "Controlled hero title" })).toBeTruthy();
     const surface = document.querySelector("[data-page-editor='home']") as HTMLElement;
     expect(surface.style.getPropertyValue("--page-editor-button-light-bg")).toBe("#123456");
+    expect(surface.style.getPropertyValue("--page-editor-grid-bg-light")).toBe("rgba(255,0,0,.12)");
+    expect(surface.style.getPropertyValue("--page-editor-grid-card-bg-light")).toBe("#123456");
+    expect(surface.style.getPropertyValue("--page-editor-grid-card-border")).toBe("2px solid #abcdef");
+    expect(surface.style.getPropertyValue("--page-editor-grid-card-radius")).toBe("22px");
+    expect(surface.style.getPropertyValue("--page-editor-grid-card-opacity")).toBe("0.82");
     expect(document.querySelector(".page-editor-home .hero-ethan")?.getAttribute("style")).toContain("order: 1");
     expect(document.querySelector(".page-editor-home")?.className).toContain("page-editor-align-center");
     expect((document.querySelector(".page-editor-home .page-editor-hero-image") as HTMLImageElement)?.src).toContain("home-hero.jpg");
@@ -41,7 +49,7 @@ describe("public navigation and interactions", () => {
     mockHomeData.sections = [
       { key: "page_editor_portfolio", content: JSON.stringify({ titleEn: "Controlled Portfolio Title", subtitleEn: "Controlled Portfolio Subtitle", heroImageUrl: "portfolio-hero.jpg", contentAlignment: "right", buttonLightBg: "#654321", sectionOrder: ["grid", "hero", "note"] }) },
       { key: "page_editor_about", content: JSON.stringify({ titleEn: "Controlled About Title", subtitleEn: "Controlled About Subtitle", heroImageUrl: "about-hero.jpg", contentAlignment: "center", buttonLightBg: "#765432", sectionOrder: ["experience", "skills", "hero", "story", "cta"] }) },
-      { key: "page_editor_services", content: JSON.stringify({ titleEn: "Controlled Services Title", subtitleEn: "Controlled Services Subtitle", heroImageUrl: "services-hero.jpg", contentAlignment: "center", buttonLightBg: "#abcdef", sectionOrder: ["cta", "process", "detail", "hero"] }) },
+      { key: "page_editor_services", content: JSON.stringify({ titleEn: "Controlled Services Title", subtitleEn: "Controlled Services Subtitle", heroImageUrl: "services-hero.jpg", contentAlignment: "center", buttonLightBg: "#abcdef", gridBgLight: "rgba(0,0,0,.08)", gridCardBgLight: "#123456", gridCardBorder: "2px solid #abcdef", gridCardRadius: "24px", gridCardOpacity: "0.75", gridTitleColorLight: "#112233", gridTextColorLight: "#445566", gridIconColorLight: "#778899", sectionOrder: ["cta", "process", "detail", "hero"] }) },
       { key: "page_editor_contact", content: JSON.stringify({ titleEn: "Controlled Contact Title", subtitleEn: "Controlled Contact Subtitle", heroImageUrl: "contact-hero.jpg", contentAlignment: "right", buttonLightBg: "#fedcba", sectionOrder: ["faq", "social", "detail", "hero"] }) },
     ];
     appPath = "/portfolio";
@@ -73,7 +81,13 @@ describe("public navigation and interactions", () => {
     expect(servicesSurface).toBeTruthy();
     expect(servicesSurface.className).toContain("page-editor-align-center");
     expect(servicesSurface.style.getPropertyValue("--page-editor-button-light-bg")).toBe("#abcdef");
+    expect(servicesSurface.style.getPropertyValue("--page-editor-grid-bg-light")).toBe("rgba(0,0,0,.08)");
+    expect(servicesSurface.style.getPropertyValue("--page-editor-grid-card-bg-light")).toBe("#123456");
+    expect(servicesSurface.style.getPropertyValue("--page-editor-grid-card-border")).toBe("2px solid #abcdef");
+    expect(servicesSurface.style.getPropertyValue("--page-editor-grid-card-radius")).toBe("24px");
+    expect(servicesSurface.style.getPropertyValue("--page-editor-grid-card-opacity")).toBe("0.75");
     expect((servicesSurface.querySelector(".page-editor-hero-image") as HTMLImageElement)?.src).toContain("services-hero.jpg");
+    expect(servicesSurface.querySelector(".services-reference-grid .services-reference-card")).toBeTruthy();
     expect(servicesSurface.querySelector(".services-reference-cta")?.getAttribute("style")).toContain("order: 0");
     un3();
 
