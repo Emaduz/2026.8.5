@@ -31,6 +31,21 @@
 - [x] Replace Featured Work drag with arrow controls and make project cards fully clickable
 - [x] Reduce vertical spacing between project images on mobile and remove stage-count card
 - [x] Keep Senior Graphic Designer in English in header across both languages
-- [ ] Create a complete ZIP from the latest stable website version with project files at archive root
-- [ ] Verify ZIP structure has no extra nested project directory
-- [ ] Deliver the ZIP archive to the user
+- [x] Create a complete ZIP from the latest stable website version with project files at archive root
+- [x] Verify ZIP structure has no extra nested project directory
+- [x] Deliver the ZIP archive to the user
+- [x] Remove the testimonials section from the public Home page
+- [x] Verify the testimonials section is absent from rendered Home output
+- [x] Package the modified Home.tsx as a ZIP for upload
+- [x] Diagnose why Page Editor settings do not affect public pages
+- [x] Connect saved page design settings to public page rendering for all supported controls
+- [x] Add regression tests for saving and applying page design settings
+- [x] Verify Page Editor changes visually on a public page
+- [x] Wire About sectionOrder to independently rendered experience and skills sections
+- [x] Add the Services CTA to the supported sectionOrder model and apply its public ordering
+- [x] Expand regression tests across Home, Portfolio, About, Services, and Contact for saved settings including order, alignment, hero image, and button colors
+- [x] Add DOM integration tests verifying saved page editor settings on Portfolio, About, Services, and Contact
+- [x] Strengthen multi-page DOM assertions to verify alignment classes, hero image rendering, button CSS variables, and section order
+- [ ] Package the latest Page Editor fix and 50-test version as a root-level ZIP for GitHub upload
+- [ ] Verify the new ZIP contents and checksum
+- [ ] Continue live-domain comparison against the latest local build without changing the domain
