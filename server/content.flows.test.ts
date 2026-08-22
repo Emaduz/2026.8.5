@@ -41,6 +41,11 @@ const fakeDb = {
 };
 
 vi.mock("./db", () => ({
+  getAdminCredential: vi.fn(async () => undefined),
+  createAdminCredential: vi.fn(async () => undefined),
+  updateAdminCredential: vi.fn(async () => undefined),
+  createPasswordResetToken: vi.fn(async () => undefined),
+  consumePasswordResetToken: vi.fn(async () => false),
   getDb: vi.fn(async () => fakeDb),
   listSections: vi.fn(async () => []),
   listProjects: vi.fn(async (publishedOnly: boolean) => publishedOnly ? state.projects.filter(item => item.published === 1) : state.projects),

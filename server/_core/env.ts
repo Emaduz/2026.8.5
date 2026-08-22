@@ -8,4 +8,8 @@ export const ENV = {
   isProduction: process.env.NODE_ENV === "production",
   forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
+  brevoApiKey: process.env.BREVO_API_KEY ?? "",
+  brevoSenderEmail: process.env.BREVO_SENDER_EMAIL ?? "Emad.i202020@gmail.com",
+  adminRecoveryEmail: process.env.ADMIN_RECOVERY_EMAIL ?? "Emad.i202020@gmail.com",
+  appBaseUrl: process.env.APP_BASE_URL ?? "https://emadalddine.com",
 };

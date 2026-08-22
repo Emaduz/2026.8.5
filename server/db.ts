@@ -1,6 +1,6 @@
 import { asc, desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, Post, Project, ProjectSlide, SiteSection, posts, projectSlides, projects, siteSections, users } from "../drizzle/schema";
+import { InsertUser, Post, Project, ProjectSlide, SiteSection, adminCredentials, adminPasswordResetTokens, posts, projectSlides, projects, siteSections, users } from "../drizzle/schema";
 
 type UserInsert = InsertUser;
 import { ENV } from "./_core/env";
@@ -157,6 +157,42 @@ export async function saveSection(input: { key: string; title?: string | null; t
 
 export const contentTables = { posts, projects, siteSections };
 
+export async function getAdminCredential() {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(adminCredentials).limit(1);
+  return rows[0];
+}
+
+export async function createAdminCredential(passwordHash: string) {
+  const db = requireDb(await getDb());
+  await db.insert(adminCredentials).values({ passwordHash });
+  return getAdminCredential();
+}
+
+export async function updateAdminCredential(passwordHash: string) {
+  const db = requireDb(await getDb());
+  const current = await getAdminCredential();
+  if (!current) return createAdminCredential(passwordHash);
+  await db.update(adminCredentials).set({ passwordHash, updatedAt: new Date() }).where(eq(adminCredentials.id, current.id));
+  return getAdminCredential();
+}
+
+export async function createPasswordResetToken(tokenHash: string, expiresAt: Date) {
+  const db = requireDb(await getDb());
+  await db.delete(adminPasswordResetTokens);
+  await db.insert(adminPasswordResetTokens).values({ tokenHash, expiresAt });
+}
+
+export async function consumePasswordResetToken(tokenHash: string) {
+  const db = requireDb(await getDb());
+  const rows = await db.select().from(adminPasswordResetTokens).where(eq(adminPasswordResetTokens.tokenHash, tokenHash)).limit(1);
+  const token = rows[0];
+  if (!token || token.usedAt || token.expiresAt.getTime() <= Date.now()) return false;
+  await db.update(adminPasswordResetTokens).set({ usedAt: new Date() }).where(eq(adminPasswordResetTokens.id, token.id));
+  return true;
+}
+
 
 
 import mysql from "mysql2/promise";
@@ -178,6 +214,22 @@ export async function ensureDatabaseInitialized() {
           createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           lastSignedIn TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      await connection.query(`
+        CREATE TABLE IF NOT EXISTS admin_credentials (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          passwordHash TEXT NOT NULL,
+          updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        );
+      `);
+      await connection.query(`
+        CREATE TABLE IF NOT EXISTS admin_password_reset_tokens (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          tokenHash VARCHAR(128) NOT NULL UNIQUE,
+          expiresAt TIMESTAMP NOT NULL,
+          usedAt TIMESTAMP NULL,
+          createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
       await connection.query(`

@@ -259,3 +259,26 @@ describe("final bilingual and visual polish contracts", () => {
     expect(config).toContain('"hero", "detail", "process", "cta"');
   });
 });
+
+
+describe("admin password recovery contracts", () => {
+  it("uses hashed one-time reset tokens and exposes the protected auth procedures", () => {
+    const router = read("server/routers.ts");
+    const hashing = read("server/adminPassword.ts");
+    const schema = read("drizzle/schema.ts");
+    const admin = read("client/src/pages/Admin.tsx");
+    const reset = read("client/src/pages/PasswordReset.tsx");
+    expect(hashing).toContain("scryptSync");
+    expect(router).toContain("changeAdminPassword");
+    expect(router).toContain("requestPasswordReset");
+    expect(router).toContain("resetAdminPassword");
+    expect(router).toContain("/v3/smtp/email");
+    expect(schema).toContain("admin_password_reset_tokens");
+    expect(admin).toContain("SecurityPanel");
+    expect(admin).toContain("Email recovery");
+    expect(admin).not.toContain("mailto:");
+    expect(admin).not.toContain("wa.me");
+    expect(reset).toContain("resetAdminPassword");
+    expect(reset).toContain("token");
+  });
+});

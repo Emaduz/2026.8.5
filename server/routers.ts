@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { createHash, timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { COOKIE_NAME } from "@shared/const";
@@ -7,9 +7,10 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { ENV } from "./_core/env";
-import { getDb, getPostById, getProjectById, listPosts, listProjects, listProjectsWithSlides, listSections, saveSection } from "./db";
+import { createAdminCredential, createPasswordResetToken, consumePasswordResetToken, getAdminCredential, getDb, getPostById, getProjectById, listPosts, listProjects, listProjectsWithSlides, listSections, saveSection, updateAdminCredential } from "./db";
 import { posts, projectSlides, projects } from "../drizzle/schema";
 import { storagePut } from "./storage";
+import { hashAdminPassword, verifyAdminPasswordHash } from "./adminPassword";
 
 const ADMIN_PASSWORD_COOKIE = "admin_panel_access";
 
@@ -28,6 +29,54 @@ function matchesAdminPassword(input: string) {
   return inputBuffer.length === expectedBuffer.length && timingSafeEqual(inputBuffer, expectedBuffer);
 }
 
+async function verifyConfiguredAdminPassword(input: string) {
+  const stored = await getAdminCredential();
+  if (stored) return verifyAdminPasswordHash(input, stored.passwordHash);
+  return matchesAdminPassword(input);
+}
+
+async function getCurrentAdminAccessToken() {
+  const stored = await getAdminCredential();
+  const material = stored?.passwordHash ?? (ENV.adminPanelPassword || DEFAULT_ADMIN_PASSWORD);
+  return createHash("sha256").update(`emad-admin-token-salt|${material}`).digest("hex");
+}
+
+function hashResetToken(token: string) {
+  return createHash("sha256").update(token).digest("hex");
+}
+
+const resetRequestLog = new Map<string, { count: number; windowStart: number }>();
+const RESET_WINDOW_MS = 15 * 60 * 1000;
+const RESET_MAX_REQUESTS = 3;
+
+function canRequestReset(identifier: string) {
+  const now = Date.now();
+  const previous = resetRequestLog.get(identifier);
+  if (!previous || now - previous.windowStart >= RESET_WINDOW_MS) {
+    resetRequestLog.set(identifier, { count: 1, windowStart: now });
+    return true;
+  }
+  if (previous.count >= RESET_MAX_REQUESTS) return false;
+  previous.count += 1;
+  return true;
+}
+
+async function sendBrevoResetEmail(token: string) {
+  if (!ENV.brevoApiKey) throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Password recovery email is not configured" });
+  const resetUrl = `${ENV.appBaseUrl.replace(/\/$/, "")}/reset-password?token=${encodeURIComponent(token)}`;
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: { "api-key": ENV.brevoApiKey, "content-type": "application/json", accept: "application/json" },
+    body: JSON.stringify({
+      sender: { email: ENV.brevoSenderEmail, name: "EmadAlddine" },
+      to: [{ email: ENV.adminRecoveryEmail }],
+      subject: "Reset your EmadAlddine control panel password",
+      htmlContent: `<p>You requested a password reset for the EmadAlddine control panel.</p><p><a href="${resetUrl}">Reset your password</a></p><p>This link expires in 15 minutes and can be used once.</p>`,
+    }),
+  });
+  if (!response.ok) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Unable to send password recovery email" });
+}
+
 function getCookieValue(req: { headers: { cookie?: string | string[] } }, name: string) {
   const header = req.headers.cookie;
   const cookieHeader = Array.isArray(header) ? header.join(";") : header;
@@ -37,10 +86,10 @@ function getCookieValue(req: { headers: { cookie?: string | string[] } }, name: 
 const ADMIN_PANEL_USERNAME = "Emadalddine";
 const ADMIN_SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 
-const ownerProcedure = publicProcedure.use(({ ctx, next }) => {
-  if (getCookieValue(ctx.req, ADMIN_PASSWORD_COOKIE) !== getAdminAccessToken()) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "Control panel login required" });
-  }
+const ownerProcedure = publicProcedure.use(async ({ ctx, next }) => {
+  const cookie = getCookieValue(ctx.req, ADMIN_PASSWORD_COOKIE);
+  const currentToken = await getCurrentAdminAccessToken();
+  if (cookie !== currentToken) throw new TRPCError({ code: "UNAUTHORIZED", message: "Control panel login required" });
   return next({ ctx });
 });
 
@@ -112,10 +161,10 @@ export const appRouter = router({
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
-    verifyAdminPassword: publicProcedure.input(z.object({ password: z.string().min(1).max(256) })).mutation(({ input, ctx }) => {
-      if (!matchesAdminPassword(input.password)) throw new TRPCError({ code: "UNAUTHORIZED", message: "Incorrect admin password" });
+    verifyAdminPassword: publicProcedure.input(z.object({ password: z.string().min(1).max(256) })).mutation(async ({ input, ctx }) => {
+      if (!await verifyConfiguredAdminPassword(input.password)) throw new TRPCError({ code: "UNAUTHORIZED", message: "Incorrect admin password" });
       const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.cookie(ADMIN_PASSWORD_COOKIE, getAdminAccessToken(), { ...cookieOptions, sameSite: "lax", maxAge: ADMIN_SESSION_MAX_AGE_MS });
+      ctx.res.cookie(ADMIN_PASSWORD_COOKIE, await getCurrentAdminAccessToken(), { ...cookieOptions, sameSite: "lax", maxAge: ADMIN_SESSION_MAX_AGE_MS });
       return { success: true } as const;
     }),
     uploadFile: ownerProcedure.input(z.object({
@@ -133,20 +182,40 @@ export const appRouter = router({
       const result = await storagePut(input.filename, buffer, input.contentType);
       return { url: result.url, key: result.key };
     }),
-    verifyAdminCredentials: publicProcedure.input(z.object({ username: z.string().min(1).max(128), password: z.string().min(1).max(256) })).mutation(({ input, ctx }) => {
-      if (!matchesAdminUsername(input.username) || !matchesAdminPassword(input.password)) throw new TRPCError({ code: "UNAUTHORIZED", message: "Incorrect username or password" });
+    verifyAdminCredentials: publicProcedure.input(z.object({ username: z.string().min(1).max(128), password: z.string().min(1).max(256) })).mutation(async ({ input, ctx }) => {
+      if (!matchesAdminUsername(input.username) || !await verifyConfiguredAdminPassword(input.password)) throw new TRPCError({ code: "UNAUTHORIZED", message: "Incorrect username or password" });
       const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.cookie(ADMIN_PASSWORD_COOKIE, getAdminAccessToken(), { ...cookieOptions, sameSite: "lax", maxAge: ADMIN_SESSION_MAX_AGE_MS });
+      ctx.res.cookie(ADMIN_PASSWORD_COOKIE, await getCurrentAdminAccessToken(), { ...cookieOptions, sameSite: "lax", maxAge: ADMIN_SESSION_MAX_AGE_MS });
       return { success: true } as const;
     }),
-    adminPasswordStatus: publicProcedure.query(({ ctx }) => ({ authenticated: getCookieValue(ctx.req, ADMIN_PASSWORD_COOKIE) === getAdminAccessToken() })),
-    refreshAdminSession: publicProcedure.mutation(({ ctx }) => {
-      if (getCookieValue(ctx.req, ADMIN_PASSWORD_COOKIE) !== getAdminAccessToken()) {
+    adminPasswordStatus: publicProcedure.query(async ({ ctx }) => ({ authenticated: getCookieValue(ctx.req, ADMIN_PASSWORD_COOKIE) === await getCurrentAdminAccessToken() })),
+    refreshAdminSession: publicProcedure.mutation(async ({ ctx }) => {
+      if (getCookieValue(ctx.req, ADMIN_PASSWORD_COOKIE) !== await getCurrentAdminAccessToken()) {
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Control panel session expired" });
       }
       const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.cookie(ADMIN_PASSWORD_COOKIE, getAdminAccessToken(), { ...cookieOptions, maxAge: ADMIN_SESSION_MAX_AGE_MS });
+      ctx.res.cookie(ADMIN_PASSWORD_COOKIE, await getCurrentAdminAccessToken(), { ...cookieOptions, maxAge: ADMIN_SESSION_MAX_AGE_MS });
       return { success: true, maxAgeMs: ADMIN_SESSION_MAX_AGE_MS } as const;
+    }),
+    changeAdminPassword: ownerProcedure.input(z.object({ currentPassword: z.string().min(1).max(256), newPassword: z.string().min(12).max(256) })).mutation(async ({ input, ctx }) => {
+      if (!await verifyConfiguredAdminPassword(input.currentPassword)) throw new TRPCError({ code: "UNAUTHORIZED", message: "Current password is incorrect" });
+      await updateAdminCredential(hashAdminPassword(input.newPassword));
+      const cookieOptions = getSessionCookieOptions(ctx.req);
+      ctx.res.cookie(ADMIN_PASSWORD_COOKIE, await getCurrentAdminAccessToken(), { ...cookieOptions, sameSite: "lax", maxAge: ADMIN_SESSION_MAX_AGE_MS });
+      return { success: true } as const;
+    }),
+    requestPasswordReset: publicProcedure.input(z.object({ email: z.string().email().max(320) })).mutation(async ({ input }) => {
+      const normalized = input.email.trim().toLowerCase();
+      if (normalized !== ENV.adminRecoveryEmail.trim().toLowerCase() || !canRequestReset(normalized)) return { success: true } as const;
+      const token = randomBytes(32).toString("hex");
+      await createPasswordResetToken(hashResetToken(token), new Date(Date.now() + 15 * 60 * 1000));
+      await sendBrevoResetEmail(token);
+      return { success: true } as const;
+    }),
+    resetAdminPassword: publicProcedure.input(z.object({ token: z.string().length(64), newPassword: z.string().min(12).max(256) })).mutation(async ({ input }) => {
+      if (!await consumePasswordResetToken(hashResetToken(input.token))) throw new TRPCError({ code: "BAD_REQUEST", message: "This reset link is invalid or expired" });
+      await updateAdminCredential(hashAdminPassword(input.newPassword));
+      return { success: true } as const;
     }),
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);

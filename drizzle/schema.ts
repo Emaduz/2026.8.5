@@ -120,3 +120,20 @@ export const testimonials = mysqlTable("testimonials", {
 });
 
 export type Testimonial = typeof testimonials.$inferSelect;
+
+export const adminCredentials = mysqlTable("admin_credentials", {
+  id: int("id").autoincrement().primaryKey(),
+  passwordHash: text("passwordHash").notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const adminPasswordResetTokens = mysqlTable("admin_password_reset_tokens", {
+  id: int("id").autoincrement().primaryKey(),
+  tokenHash: varchar("tokenHash", { length: 128 }).notNull().unique(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  usedAt: timestamp("usedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AdminCredential = typeof adminCredentials.$inferSelect;
+export type AdminPasswordResetToken = typeof adminPasswordResetTokens.$inferSelect;
