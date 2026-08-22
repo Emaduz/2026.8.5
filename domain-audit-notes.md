@@ -25,3 +25,11 @@ The live domain references `/assets/index-DGqZd6mE.js` and `/assets/index-BVbuso
 The live JavaScript bundle contains the old content marker `Creative Design Solutions` and the Featured Work arrow marker, but it contains no `page-editor-surface` or `page_editor_contact` marker. The current local source/build contains Page Editor surface markers and does not contain the old `A sight to Future` hero title. This is direct evidence that the Page Editor public-wiring changes in the latest local version are not in the deployed Railway bundle.
 
 The live domain's old content and asset hashes explain the observed mismatch: the public deployment is a previous build, not the latest local checkpoint. The domain already includes several older refinements (eight services, arrow carousel, clickable project links, no public Testimonials), so the deployment is not an empty or completely unrelated site; it is simply behind the latest source.
+
+## Root-cause evidence from the live API
+
+The live `content.publicHome` API returns Page Editor rows for `page_editor_home`, `page_editor_portfolio`, and `page_editor_services`, including saved titles, alignment, icon style, spacing, and section order. The live API therefore has the editor records; the data layer is not the primary missing piece.
+
+The deployed frontend bundle is older than the current local bundle. The live HTML was last modified at 11:16, while the live Services Page Editor row was updated at 11:19. The live JavaScript bundle has no `page-editor-surface` or `page_editor_contact` marker, whereas the local latest ZIP contains `PageEditorSurface`, `page-editor-hero-image`, `getPageEditorSectionStyle`, and the page-editor keys. This proves the main mismatch is deployment: the current domain serves an older frontend build that does not contain the public Page Editor wiring, even though the remote API/database already contains Page Editor records.
+
+The latest archive is `/home/ubuntu/emadalddine-page-editor-fix.zip`, size approximately 1.1 MB, SHA-256 `75c16e7bbf251a81a462859131b4fb767a2f9e96333ac88cdd5fa4fd0c30ecb9`. It contains the required source files at repository root paths and excludes node_modules, .git, .manus-logs, and dist.

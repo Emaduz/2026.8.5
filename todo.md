@@ -46,6 +46,15 @@
 - [x] Expand regression tests across Home, Portfolio, About, Services, and Contact for saved settings including order, alignment, hero image, and button colors
 - [x] Add DOM integration tests verifying saved page editor settings on Portfolio, About, Services, and Contact
 - [x] Strengthen multi-page DOM assertions to verify alignment classes, hero image rendering, button CSS variables, and section order
-- [ ] Package the latest Page Editor fix and 50-test version as a root-level ZIP for GitHub upload
-- [ ] Verify the new ZIP contents and checksum
-- [ ] Continue live-domain comparison against the latest local build without changing the domain
+- [x] Package the latest Page Editor fix and 50-test version as a root-level ZIP for GitHub upload
+- [x] Verify the new ZIP contents and checksum
+- [x] Continue live-domain comparison against the latest local build without changing the domain
+- [x] Add Services Grid control schema to Page Editor and Admin PageEditorView
+- [x] Implement services-reference-grid styling and variable injection in PageEditorSurface and CSS
+- [x] Wire Services Grid settings into Home and Services public rendering
+- [x] Add unit and integration tests for Services Grid controls and verify production build
+- [x] Add unit tests for Services Grid settings parsing and PageEditorSurface variable injection
+- [x] Add focused PageEditorView test for Services Grid control rendering and save payload
+- [ ] Package the latest Services Grid Page Editor version as a root-level ZIP for repository upload
+- [ ] Verify the archive contains hidden files and no nested project directory
+- [ ] Deliver the latest complete ZIP archive to the user
