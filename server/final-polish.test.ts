@@ -136,7 +136,15 @@ describe("final bilingual and visual polish contracts", () => {
     expect(home).toContain("featured-work-arrow-controls");
   });
 
-  it("implements the requested static logo block, drag carousel, and eight-service constellation", () => {
+  it("keeps customer testimonials out of the public Home page", () => {
+    const home = read("client/src/pages/Home.tsx");
+    expect(home).not.toContain("testimonials-section");
+    expect(home).not.toContain("testimonials-track");
+    expect(home).not.toContain("Client Feedback");
+    expect(home).not.toContain("آراء العملاء");
+  });
+
+  it("implements the requested static logo block, arrow carousel, and eight-service constellation", () => {
     const home = read("client/src/pages/Home.tsx");
     const portrait = read("client/src/components/PortraitComposition.tsx");
     const css = read("client/src/index.css");
@@ -229,5 +237,25 @@ describe("final bilingual and visual polish contracts", () => {
     expect(services).toContain("record.titleAr");
     expect(contact).toContain("contact?.titleAr");
     expect(contact).toContain("contact?.contentAr");
+  });
+  it("applies Page Editor settings across every public page and syncs loaded admin values", () => {
+    for (const page of ["Home", "Portfolio", "About", "Services", "Contact"]) {
+      const source = read(`client/src/pages/${page}.tsx`);
+      expect(source).toContain("PageEditorSurface");
+      expect(source).toContain("parsePageEditorSettings");
+      expect(source).toContain("getPageEditorSectionStyle");
+    }
+    const editor = read("client/src/components/PageEditorView.tsx");
+    expect(editor).toContain("useEffect");
+    expect(editor).toContain("setConfigs(initialConfigs)");
+    const surface = read("client/src/components/PageEditorSurface.tsx");
+    expect(surface).toContain("data-page-editor");
+    expect(surface).toContain("--page-editor-button-light-bg");
+    const about = read("client/src/pages/About.tsx");
+    expect(about).toContain("about-reference-main-sections");
+    expect(about).toContain("getPageEditorSectionStyle(pageSettings, \"experience\")");
+    expect(about).toContain("getPageEditorSectionStyle(pageSettings, \"skills\")");
+    const config = read("client/src/lib/pageEditorConfig.ts");
+    expect(config).toContain('"hero", "detail", "process", "cta"');
   });
 });
