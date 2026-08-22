@@ -2068,3 +2068,40 @@ html, body { font-family: "Rubik"; }
     transition: none !important;
   }
 }
+
+/* Featured Work Arrow Controls & Spacing Fixes */
+.featured-work-wrap-arrows {
+  position: relative;
+}
+.featured-work-arrow-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+.featured-arrow-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(143,24,25,.25);
+  background: var(--color-card, #fffaf4);
+  color: #8f1819;
+  transition: all .2s ease;
+}
+.featured-arrow-btn:hover {
+  background: #8f1819;
+  color: #fff;
+  border-color: #8f1819;
+}
+.project-detail-mark {
+  display: none !important;
+}
+@media (max-width: 768px) {
+  .behance-story-block {
+    margin-bottom: 1.5rem !important;
+  }
+}

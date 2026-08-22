@@ -25,11 +25,11 @@ const messages: Record<Locale, Messages> = {
     switchLanguage: "Switch language", switchTheme: "Switch theme", lightTheme: "Light", darkTheme: "Dark",
     seniorDesigner: "Senior Graphic Designer", closeMenu: "Close menu", openMenu: "Open menu", whatsapp: "Message on WhatsApp", controlLogin: "Open Emadalddine control panel",
   },
-  ar: {
-    home: "الرئيسية", portfolio: "الأعمال", about: "نبذة عني", services: "الخدمات", contact: "تواصل",
-    switchLanguage: "تبديل اللغة", switchTheme: "تبديل المظهر", lightTheme: "فاتح", darkTheme: "داكن",
-    seniorDesigner: "مصمم جرافيك أول", closeMenu: "إغلاق القائمة", openMenu: "فتح القائمة", whatsapp: "راسلني على واتساب", controlLogin: "فتح لوحة تحكم Emadalddine",
-  },
+    ar: {
+      home: "الرئيسية", portfolio: "الأعمال", about: "نبذة عني", services: "الخدمات", contact: "تواصل",
+      switchLanguage: "تبديل اللغة", switchTheme: "تبديل المظهر", lightTheme: "فاتح", darkTheme: "داكن",
+      seniorDesigner: "Senior Graphic Designer", closeMenu: "إغلاق القائمة", openMenu: "فتح القائمة", whatsapp: "راسلني على واتساب", controlLogin: "فتح لوحة تحكم Emadalddine",
+    },
 };
 
 const LocaleContext = createContext<{ locale: Locale; dir: "ltr" | "rtl"; toggleLocale: () => void; t: Messages }>({
