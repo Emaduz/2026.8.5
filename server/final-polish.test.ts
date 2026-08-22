@@ -133,7 +133,7 @@ describe("final bilingual and visual polish contracts", () => {
     expect(arabicCopy).not.toContain("UI/UX");
     expect(arabicCopy).not.toContain("Get Started");
     expect(home).toContain("جاري تحميل أحدث الأعمال...");
-    expect(home).toContain("اسحب لاستعراض الأعمال");
+    expect(home).toContain("featured-work-arrow-controls");
   });
 
   it("implements the requested static logo block, drag carousel, and eight-service constellation", () => {
@@ -141,7 +141,7 @@ describe("final bilingual and visual polish contracts", () => {
     const portrait = read("client/src/components/PortraitComposition.tsx");
     const css = read("client/src/index.css");
     expect(home).toContain("FeaturedWorkCarousel");
-    expect(home).toContain("onPointerDown");
+    expect(home).toContain("scrollLeft");
     expect(home).toContain("featured-work-main");
     expect(home).toContain("about-image-logo");
     expect(home).toContain("ServicesMarquee");

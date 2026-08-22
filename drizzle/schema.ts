@@ -100,3 +100,23 @@ export type SiteSection = typeof siteSections.$inferSelect;
 export type Project = typeof projects.$inferSelect;
 export type ProjectSlide = typeof projectSlides.$inferSelect;
 export type Post = typeof posts.$inferSelect;
+
+export const testimonials = mysqlTable("testimonials", {
+  id: int("id").autoincrement().primaryKey(),
+  clientName: varchar("clientName", { length: 255 }).notNull(),
+  clientNameEn: varchar("clientNameEn", { length: 255 }),
+  clientNameAr: varchar("clientNameAr", { length: 255 }),
+  role: varchar("role", { length: 255 }).notNull(),
+  roleEn: varchar("roleEn", { length: 255 }),
+  roleAr: varchar("roleAr", { length: 255 }),
+  quote: text("quote").notNull(),
+  quoteEn: text("quoteEn"),
+  quoteAr: text("quoteAr"),
+  avatarUrl: text("avatarUrl"),
+  published: int("published").default(1).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Testimonial = typeof testimonials.$inferSelect;
