@@ -26,3 +26,11 @@
 - [x] Package a root-level emadalddine-root.zip without nested project folders
 - [x] Completely remove hero-phone-line JSX from Home.tsx so the phone row no longer renders
 - [x] Completely remove WhatsApp button from Hero section while keeping floating WhatsApp button
+- [x] Improve dark-mode service-card text contrast (#f3d9cb and #f7eee5)
+- [x] Hide Testimonials from public site and Admin navigation
+- [x] Replace Featured Work drag with arrow controls and make project cards fully clickable
+- [x] Reduce vertical spacing between project images on mobile and remove stage-count card
+- [x] Keep Senior Graphic Designer in English in header across both languages
+- [ ] Create a complete ZIP from the latest stable website version with project files at archive root
+- [ ] Verify ZIP structure has no extra nested project directory
+- [ ] Deliver the ZIP archive to the user
